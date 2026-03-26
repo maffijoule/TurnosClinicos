@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CEM — Planificador de Capacidad</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body ondragover="event.preventDefault()" ondrop="event.preventDefault()">
+
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-logo">C</div>
+      <div class="brand-text">CEM <span>Capacity</span></div>
+    </div>
+    <div class="topbar-tabs">
+      <button class="tab-btn active" onclick="switchModulo('ambulatorio')">Ambulatorio</button>
+      <button class="tab-btn disabled" title="Próximamente">Hospitalizado</button>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="sidebar">
+
+      <div style="display:flex;border-bottom:1px solid var(--border)">
+        <button class="subtab-btn active" id="st-demanda" onclick="switchSubtab('demanda')">Demanda</button>
+        <button class="subtab-btn" id="st-ejecutivos" onclick="switchSubtab('ejecutivos')">Ejecutivos</button>
+        <button class="subtab-btn" id="st-config" onclick="switchSubtab('config')">Config</button>
+        <button class="subtab-btn" id="st-modelos" onclick="switchSubtab('modelos')">Modelos</button>
+      </div>
+
+      <!-- PANEL: DEMANDA -->
+      <div id="panel-demanda">
+        <div class="sidebar-section">
+          <div class="section-label">Archivo CEM</div>
+          <div class="dropzone" id="dropzone">
+            <input type="file" id="fileInput" accept=".xlsx,.xls" onchange="handleFile(event)" style="display:none">
+            <div class="dropzone-icon" id="dzIcon">📊</div>
+            <div class="dropzone-title" id="dzTitle">Arrastra tu Excel aquí</div>
+            <div class="dropzone-sub" id="dzSub">Hojas: <b>Demanda · Ejecutivos · Configuracion</b></div>
+          </div>
+        </div>
+        <div class="sidebar-section">
+          <div class="section-label">Parámetros</div>
+          <div class="param-row">
+            <div class="param-label">Tiempo de atención <span class="param-val" id="val-tiempo">10 min</span></div>
+            <input type="range" id="sl-tiempo" min="1" max="60" value="10"
+              oninput="S.params.tiempo=+this.value;document.getElementById('val-tiempo').textContent=this.value+' min';recalcIfReady()">
+          </div>
+          <div class="param-row">
+            <div class="param-label">Productividad <span class="param-val" id="val-prod">80%</span></div>
+            <input type="range" id="sl-prod" min="1" max="100" value="80"
+              oninput="S.params.prod=this.value/100;document.getElementById('val-prod').textContent=this.value+'%';recalcIfReady()">
+          </div>
+          <div class="param-row">
+            <div class="param-label">Usabilidad tótem <span class="param-val" id="val-usab">50%</span></div>
+            <input type="range" id="sl-usab" min="0" max="99" value="50"
+              oninput="S.params.usab=this.value/100;document.getElementById('val-usab').textContent=this.value+'%';recalcIfReady()">
+          </div>
+        </div>
+        <div class="sidebar-section">
+          <div class="section-label">Acciones</div>
+          <button class="btn-primary" id="btnCalc" onclick="calcular()" disabled>▶ Calcular</button>
+          <button class="btn-export" id="btnExport" onclick="exportarExcel()" disabled>↓ Exportar Excel</button>
+        </div>
+      </div>
+
+      <!-- PANEL: EJECUTIVOS -->
+      <div id="panel-ejecutivos" style="display:none">
+        <div class="sidebar-section">
+          <div class="section-label">Dotación</div>
+          <div id="ej-sidebar-status" style="font-size:11px;color:var(--muted);margin-bottom:10px">
+            Carga el archivo CEM desde la pestaña Demanda
+          </div>
+          <div id="ej-sidebar-summary"></div>
+        </div>
+        <div class="sidebar-section">
+          <div class="section-label">Acciones</div>
+          <button class="btn-primary" id="btnSolver" onclick="ejecutarSolver()" disabled>▶ Ejecutar Solver</button>
+          <button class="btn-export" onclick="descargarTemplate()">↓ Descargar Template CEM</button>
+          <div id="solver-status" style="margin-top:10px;font-size:11px;color:var(--muted);line-height:1.5"></div>
+        </div>
+      </div>
+
+      <!-- PANEL: CONFIG -->
+      <div id="panel-config" style="display:none">
+        <div class="sidebar-section">
+          <div class="section-label">Parámetros Globales</div>
+          <div class="param-row">
+            <div class="param-label">Mes <span class="param-val" id="cfg-mes-val">—</span></div>
+            <input type="number" id="cfg-mes" min="1" max="12" placeholder="1–12" class="cfg-input"
+              oninput="updateCfg()">
+          </div>
+          <div class="param-row">
+            <div class="param-label">Año <span class="param-val" id="cfg-anio-val">—</span></div>
+            <input type="number" id="cfg-anio" min="2024" max="2099" placeholder="2025" class="cfg-input"
+              oninput="updateCfg()">
+          </div>
+          <div class="param-row">
+            <div class="param-label">Puestos físicos máx <span class="param-val" id="cfg-puestos-val">4</span></div>
+            <input type="range" id="cfg-puestos" min="1" max="20" value="4"
+              oninput="C.puestos_max=+this.value;document.getElementById('cfg-puestos-val').textContent=this.value;updateCfg()">
+          </div>
+          <div class="param-row">
+            <div class="param-label">Turno mín (h) <span class="param-val" id="cfg-tmin-val">4h</span></div>
+            <input type="range" id="cfg-tmin" min="1" max="12" step="0.5" value="4"
+              oninput="C.turno_min=+this.value;document.getElementById('cfg-tmin-val').textContent=this.value+'h';updateCfg()">
+          </div>
+          <div class="param-row">
+            <div class="param-label">Turno máx (h) <span class="param-val" id="cfg-tmax-val">9h</span></div>
+            <input type="range" id="cfg-tmax" min="4" max="12" step="0.5" value="9"
+              oninput="C.turno_max=+this.value;document.getElementById('cfg-tmax-val').textContent=this.value+'h';updateCfg()">
+          </div>
+          <div class="param-row">
+            <div class="param-label">Horas mín/ejecutivo <span class="param-val" id="cfg-hmin-val">20h</span></div>
+            <input type="range" id="cfg-hmin" min="4" max="48" value="20"
+              oninput="C.horas_min_ejec=+this.value;document.getElementById('cfg-hmin-val').textContent=this.value+'h';updateCfg()">
+          </div>
+        </div>
+        <div class="sidebar-section">
+          <div class="section-label">Horario de Operación</div>
+          <div class="param-row">
+            <div class="param-label">Apertura <span class="param-val" id="cfg-hop-val">07:00</span></div>
+            <input type="range" id="cfg-hop" min="6" max="12" step="0.5" value="7"
+              oninput="C.hora_apertura=+this.value;document.getElementById('cfg-hop-val').textContent=horaSlotStr(this.value);updateCfg()">
+          </div>
+          <div class="param-row">
+            <div class="param-label">Cierre <span class="param-val" id="cfg-hci-val">21:00</span></div>
+            <input type="range" id="cfg-hci" min="16" max="22" step="0.5" value="21"
+              oninput="C.hora_cierre=+this.value;document.getElementById('cfg-hci-val').textContent=horaSlotStr(this.value);updateCfg()">
+          </div>
+        </div>
+        <div class="sidebar-section">
+          <div class="section-label">Restricciones de Dotación</div>
+          <div class="param-row">
+            <div class="param-label">Ejec. apertura mín <span class="param-val" id="cfg-ap-val">2</span></div>
+            <input type="range" id="cfg-ap" min="0" max="6" value="2"
+              oninput="C.apertura_min=+this.value;document.getElementById('cfg-ap-val').textContent=this.value;updateCfg()">
+          </div>
+          <div class="param-row">
+            <div class="param-label">Ejec. cierre mín <span class="param-val" id="cfg-ci-val">2</span></div>
+            <input type="range" id="cfg-ci" min="0" max="6" value="2"
+              oninput="C.cierre_min=+this.value;document.getElementById('cfg-ci-val').textContent=this.value;updateCfg()">
+          </div>
+          <div class="param-row">
+            <div class="param-label">Ejec. sábado mín <span class="param-val" id="cfg-sab-val">2</span></div>
+            <input type="range" id="cfg-sab" min="0" max="6" value="2"
+              oninput="C.sabado_min=+this.value;document.getElementById('cfg-sab-val').textContent=this.value;updateCfg()">
+          </div>
+        </div>
+
+      </div>
+
+    </div><!-- /sidebar -->
+
+    <div class="content" id="content">
+      <div class="empty">
+        <div class="empty-icon">📂</div>
+        <div class="empty-title">Sin datos cargados</div>
+        <div class="empty-sub">Carga tu archivo Excel para calcular el personal requerido.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" crossorigin="anonymous"></script>
+  <script src="/static/app.js"></script>
+  <script src="/static/solver.js"></script>
+  <script src="/static/models.js"></script>
+</body>
+
+</html>
