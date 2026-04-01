@@ -19,8 +19,9 @@
       <div class="brand-text">CEM <span>Capacity</span></div>
     </div>
     <div class="topbar-tabs">
-      <button class="tab-btn active" onclick="switchModulo('ambulatorio')">Ambulatorio</button>
-      <button class="tab-btn disabled" title="Próximamente">Hospitalizado</button>
+      <button class="tab-btn active" data-modulo="ambulatorio"
+        onclick="switchModulo('ambulatorio')">Ambulatorio</button>
+      <button class="tab-btn" data-modulo="hospitalizado" onclick="switchModulo('hospitalizado')">Hospitalizado</button>
     </div>
   </div>
 
@@ -136,25 +137,49 @@
           </div>
         </div>
         <div class="sidebar-section">
-          <div class="section-label">Restricciones de Dotación</div>
+          <div class="section-label">Dotación mínima — Lun a Vie</div>
           <div class="param-row">
-            <div class="param-label">Ejec. apertura mín <span class="param-val" id="cfg-ap-val">2</span></div>
+            <div class="param-label">Apertura mín <span class="param-val" id="cfg-ap-val">2</span></div>
             <input type="range" id="cfg-ap" min="0" max="6" value="2"
               oninput="C.apertura_min=+this.value;document.getElementById('cfg-ap-val').textContent=this.value;updateCfg()">
           </div>
           <div class="param-row">
-            <div class="param-label">Ejec. cierre mín <span class="param-val" id="cfg-ci-val">2</span></div>
+            <div class="param-label">Cierre mín <span class="param-val" id="cfg-ci-val">2</span></div>
             <input type="range" id="cfg-ci" min="0" max="6" value="2"
               oninput="C.cierre_min=+this.value;document.getElementById('cfg-ci-val').textContent=this.value;updateCfg()">
           </div>
+        </div>
+        <div class="sidebar-section">
+          <div class="section-label">Horario Sábado</div>
           <div class="param-row">
-            <div class="param-label">Ejec. sábado mín <span class="param-val" id="cfg-sab-val">2</span></div>
-            <input type="range" id="cfg-sab" min="0" max="6" value="2"
-              oninput="C.sabado_min=+this.value;document.getElementById('cfg-sab-val').textContent=this.value;updateCfg()">
+            <div class="param-label">Apertura sáb <span class="param-val" id="cfg-hsat-ap-val">09:00</span></div>
+            <input type="range" id="cfg-hsat-ap" min="6" max="14" step="0.5" value="9"
+              oninput="C.hora_apertura_sat=+this.value;document.getElementById('cfg-hsat-ap-val').textContent=horaSlotStr(this.value);updateCfg()">
+          </div>
+          <div class="param-row">
+            <div class="param-label">Cierre sáb <span class="param-val" id="cfg-hsat-ci-val">14:00</span></div>
+            <input type="range" id="cfg-hsat-ci" min="10" max="20" step="0.5" value="14"
+              oninput="C.hora_cierre_sat=+this.value;document.getElementById('cfg-hsat-ci-val').textContent=horaSlotStr(this.value);updateCfg()">
+          </div>
+        </div>
+        <div class="sidebar-section">
+          <div class="section-label">Dotación mínima — Sábado</div>
+          <div class="param-row">
+            <div class="param-label">Apertura sáb mín <span class="param-val" id="cfg-sat-ap-val">2</span></div>
+            <input type="range" id="cfg-sat-ap" min="0" max="6" value="2"
+              oninput="C.apertura_min_sat=+this.value;document.getElementById('cfg-sat-ap-val').textContent=this.value;updateCfg()">
+          </div>
+          <div class="param-row">
+            <div class="param-label">Cierre sáb mín <span class="param-val" id="cfg-sat-ci-val">2</span></div>
+            <input type="range" id="cfg-sat-ci" min="0" max="6" value="2"
+              oninput="C.cierre_min_sat=+this.value;document.getElementById('cfg-sat-ci-val').textContent=this.value;updateCfg()">
           </div>
         </div>
 
       </div>
+
+      <!-- PANEL: HOSPITALIZADO -->
+      <div id="panel-hospitalizado" style="display:none"></div>
 
     </div><!-- /sidebar -->
 
@@ -173,6 +198,7 @@
   <script src="/static/app.js"></script>
   <script src="/static/solver.js"></script>
   <script src="/static/models.js"></script>
+  <script src="/static/hosp_app.js"></script>
 </body>
 
 </html>

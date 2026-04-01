@@ -1,5 +1,4861 @@
 [
   {
+    "id": "f704e07c",
+    "nombre": "cem caso 1",
+    "descripcion": "intente eliminar al partime",
+    "fecha": "2026-03-31 17:10",
+    "deficit_cobertura": 77.99,
+    "params": {
+      "mes": 6,
+      "anio": 2025,
+      "n_ejecutivos": 6,
+      "tiempo": 10,
+      "prod": 0.8,
+      "usab": 0.5,
+      "puestos_max": 4,
+      "turno_min": 4,
+      "turno_max": 9,
+      "apertura_min": 2,
+      "cierre_min": 2
+    },
+    "solver_result": {
+      "deficit_cobertura": 77.99,
+      "dem_sat_profile": {
+        "09:00": 2.2135416666666665,
+        "10:00": 2.5520833333333335,
+        "11:00": 2.3958333333333335,
+        "12:00": 1.6145833333333333,
+        "13:00": 0.8072916666666666
+      },
+      "dem_wd_profile": {
+        "07:00": 0.08333333333333333,
+        "08:00": 1.5833333333333333,
+        "09:00": 2.96875,
+        "10:00": 3.875,
+        "11:00": 3.1875,
+        "12:00": 2.7916666666666665,
+        "13:00": 2.8645833333333335,
+        "13:30": 4,
+        "15:00": 4,
+        "16:00": 4,
+        "17:00": 4,
+        "18:00": 3.203125,
+        "19:00": 1.328125,
+        "20:00": 0.10416666666666667
+      },
+      "fin_op": 42,
+      "horas_ejecutivo": {
+        "Ejecutivo 1": {
+          "semana_1": 29,
+          "semana_2": 29,
+          "semana_3": 29,
+          "semana_4": 29,
+          "semana_5": 5,
+          "total": 121
+        },
+        "Ejecutivo 2": {
+          "semana_1": 42,
+          "semana_2": 42,
+          "semana_3": 42,
+          "semana_4": 42,
+          "semana_5": 7.5,
+          "total": 175.5
+        },
+        "Ejecutivo 3": {
+          "semana_1": 40,
+          "semana_2": 40,
+          "semana_3": 40,
+          "semana_4": 40,
+          "semana_5": 8,
+          "total": 168
+        },
+        "Ejecutivo 4": {
+          "semana_1": 29,
+          "semana_2": 29,
+          "semana_3": 29,
+          "semana_4": 29,
+          "semana_5": 5,
+          "total": 121
+        },
+        "Ejecutivo 5": {
+          "semana_1": 25,
+          "semana_2": 25,
+          "semana_3": 25,
+          "semana_4": 25,
+          "semana_5": 5,
+          "total": 105
+        },
+        "Ejecutivo 6": {
+          "semana_1": 25,
+          "semana_2": 25,
+          "semana_3": 25,
+          "semana_4": 25,
+          "semana_5": 5,
+          "total": 105
+        }
+      },
+      "inicio_op": 14,
+      "semana_tipo": [
+        {
+          "colacion": true,
+          "dias_libres": [
+            "domingo"
+          ],
+          "dias_trabajo": [
+            "lunes",
+            "martes",
+            "miércoles",
+            "jueves",
+            "viernes",
+            "sábado"
+          ],
+          "duracion_h": 5.5,
+          "ejecutivo": "Ejecutivo 1",
+          "entradas": {
+            "jueves": "07:00",
+            "lunes": "07:00",
+            "martes": "07:00",
+            "miércoles": "07:00",
+            "sábado": "09:00",
+            "viernes": "07:00"
+          },
+          "salidas": {
+            "jueves": "12:30",
+            "lunes": "12:30",
+            "martes": "12:30",
+            "miércoles": "12:30",
+            "sábado": "13:00",
+            "viernes": "12:30"
+          }
+        },
+        {
+          "colacion": true,
+          "dias_libres": [
+            "domingo"
+          ],
+          "dias_trabajo": [
+            "lunes",
+            "martes",
+            "miércoles",
+            "jueves",
+            "viernes",
+            "sábado"
+          ],
+          "duracion_h": 8,
+          "ejecutivo": "Ejecutivo 2",
+          "entradas": {
+            "jueves": "13:00",
+            "lunes": "13:00",
+            "martes": "13:00",
+            "miércoles": "13:00",
+            "sábado": "09:00",
+            "viernes": "13:00"
+          },
+          "salidas": {
+            "jueves": "21:00",
+            "lunes": "21:00",
+            "martes": "21:00",
+            "miércoles": "21:00",
+            "sábado": "13:30",
+            "viernes": "21:00"
+          }
+        },
+        {
+          "colacion": true,
+          "dias_libres": [
+            "sábado",
+            "domingo"
+          ],
+          "dias_trabajo": [
+            "lunes",
+            "martes",
+            "miércoles",
+            "jueves",
+            "viernes"
+          ],
+          "duracion_h": 8.5,
+          "ejecutivo": "Ejecutivo 3",
+          "entradas": {
+            "jueves": "09:00",
+            "lunes": "09:00",
+            "martes": "09:00",
+            "miércoles": "09:00",
+            "viernes": "09:00"
+          },
+          "salidas": {
+            "jueves": "17:30",
+            "lunes": "17:30",
+            "martes": "17:30",
+            "miércoles": "17:30",
+            "viernes": "17:30"
+          }
+        },
+        {
+          "colacion": true,
+          "dias_libres": [
+            "domingo"
+          ],
+          "dias_trabajo": [
+            "lunes",
+            "martes",
+            "miércoles",
+            "jueves",
+            "viernes",
+            "sábado"
+          ],
+          "duracion_h": 5.5,
+          "ejecutivo": "Ejecutivo 4",
+          "entradas": {
+            "jueves": "13:00",
+            "lunes": "13:00",
+            "martes": "13:00",
+            "miércoles": "13:00",
+            "sábado": "09:00",
+            "viernes": "13:00"
+          },
+          "salidas": {
+            "jueves": "18:30",
+            "lunes": "18:30",
+            "martes": "18:30",
+            "miércoles": "18:30",
+            "sábado": "13:00",
+            "viernes": "18:30"
+          }
+        },
+        {
+          "colacion": true,
+          "dias_libres": [
+            "sábado",
+            "domingo"
+          ],
+          "dias_trabajo": [
+            "lunes",
+            "martes",
+            "miércoles",
+            "jueves",
+            "viernes"
+          ],
+          "duracion_h": 5.5,
+          "ejecutivo": "Ejecutivo 5",
+          "entradas": {
+            "jueves": "07:00",
+            "lunes": "07:00",
+            "martes": "07:00",
+            "miércoles": "07:00",
+            "viernes": "07:00"
+          },
+          "salidas": {
+            "jueves": "12:30",
+            "lunes": "12:30",
+            "martes": "12:30",
+            "miércoles": "12:30",
+            "viernes": "12:30"
+          }
+        },
+        {
+          "colacion": true,
+          "dias_libres": [
+            "sábado",
+            "domingo"
+          ],
+          "dias_trabajo": [
+            "lunes",
+            "martes",
+            "miércoles",
+            "jueves",
+            "viernes"
+          ],
+          "duracion_h": 5.5,
+          "ejecutivo": "Ejecutivo 6",
+          "entradas": {
+            "jueves": "13:00",
+            "lunes": "13:00",
+            "martes": "13:00",
+            "miércoles": "13:00",
+            "viernes": "13:00"
+          },
+          "salidas": {
+            "jueves": "18:30",
+            "lunes": "18:30",
+            "martes": "18:30",
+            "miércoles": "18:30",
+            "viernes": "18:30"
+          }
+        }
+      ],
+      "semanas": [
+        {
+          "dias": [
+            [
+              "2025-06-02",
+              "lunes"
+            ],
+            [
+              "2025-06-03",
+              "martes"
+            ],
+            [
+              "2025-06-04",
+              "miércoles"
+            ],
+            [
+              "2025-06-05",
+              "jueves"
+            ],
+            [
+              "2025-06-06",
+              "viernes"
+            ],
+            [
+              "2025-06-07",
+              "sábado"
+            ]
+          ],
+          "semana": 1
+        },
+        {
+          "dias": [
+            [
+              "2025-06-09",
+              "lunes"
+            ],
+            [
+              "2025-06-10",
+              "martes"
+            ],
+            [
+              "2025-06-11",
+              "miércoles"
+            ],
+            [
+              "2025-06-12",
+              "jueves"
+            ],
+            [
+              "2025-06-13",
+              "viernes"
+            ],
+            [
+              "2025-06-14",
+              "sábado"
+            ]
+          ],
+          "semana": 2
+        },
+        {
+          "dias": [
+            [
+              "2025-06-16",
+              "lunes"
+            ],
+            [
+              "2025-06-17",
+              "martes"
+            ],
+            [
+              "2025-06-18",
+              "miércoles"
+            ],
+            [
+              "2025-06-19",
+              "jueves"
+            ],
+            [
+              "2025-06-20",
+              "viernes"
+            ],
+            [
+              "2025-06-21",
+              "sábado"
+            ]
+          ],
+          "semana": 3
+        },
+        {
+          "dias": [
+            [
+              "2025-06-23",
+              "lunes"
+            ],
+            [
+              "2025-06-24",
+              "martes"
+            ],
+            [
+              "2025-06-25",
+              "miércoles"
+            ],
+            [
+              "2025-06-26",
+              "jueves"
+            ],
+            [
+              "2025-06-27",
+              "viernes"
+            ],
+            [
+              "2025-06-28",
+              "sábado"
+            ]
+          ],
+          "semana": 4
+        },
+        {
+          "dias": [
+            [
+              "2025-06-30",
+              "lunes"
+            ]
+          ],
+          "semana": 5
+        }
+      ],
+      "shift_types": [
+        {
+          "colacion_offset": 5,
+          "duracion_h": 5.5,
+          "entrada": "07:00",
+          "id": 0,
+          "k": 0,
+          "salida": "12:30"
+        },
+        {
+          "colacion_offset": 8,
+          "duracion_h": 8.5,
+          "entrada": "09:00",
+          "id": 1,
+          "k": 1,
+          "salida": "17:30"
+        },
+        {
+          "colacion_offset": 8,
+          "duracion_h": 8,
+          "entrada": "13:00",
+          "id": 2,
+          "k": 2,
+          "salida": "21:00"
+        },
+        {
+          "colacion_offset": 5,
+          "duracion_h": 5.5,
+          "entrada": "13:00",
+          "id": 3,
+          "k": 3,
+          "salida": "18:30"
+        }
+      ],
+      "solver_status": "Optimal",
+      "status": "ok",
+      "turnos": [
+        {
+          "ejecutivo": "Ejecutivo 1",
+          "semana": 1,
+          "fecha": "2025-06-02",
+          "dia": "lunes",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "15:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 3
+        },
+        {
+          "ejecutivo": "Ejecutivo 1",
+          "semana": 1,
+          "fecha": "2025-06-03",
+          "dia": "martes",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "12:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 1",
+          "semana": 1,
+          "fecha": "2025-06-04",
+          "dia": "miércoles",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "12:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 1",
+          "semana": 1,
+          "fecha": "2025-06-05",
+          "dia": "jueves",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "12:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 1",
+          "semana": 1,
+          "fecha": "2025-06-06",
+          "dia": "viernes",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "12:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 1",
+          "semana": 1,
+          "fecha": "2025-06-07",
+          "dia": "sábado",
+          "libre": false,
+          "entrada": "09:00",
+          "salida": "13:00",
+          "duracion_h": 4,
+          "colacion": false,
+          "colacion_offset": 4
+        },
+        {
+          "ejecutivo": "Ejecutivo 2",
+          "semana": 1,
+          "fecha": "2025-06-02",
+          "dia": "lunes",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "21:00",
+          "duracion_h": 7.5,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 2",
+          "semana": 1,
+          "fecha": "2025-06-03",
+          "dia": "martes",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "21:00",
+          "duracion_h": 7.5,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 2",
+          "semana": 1,
+          "fecha": "2025-06-04",
+          "dia": "miércoles",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "21:00",
+          "duracion_h": 7.5,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 2",
+          "semana": 1,
+          "fecha": "2025-06-05",
+          "dia": "jueves",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "21:00",
+          "duracion_h": 7.5,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 2",
+          "semana": 1,
+          "fecha": "2025-06-06",
+          "dia": "viernes",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "21:00",
+          "duracion_h": 7.5,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 2",
+          "semana": 1,
+          "fecha": "2025-06-07",
+          "dia": "sábado",
+          "libre": false,
+          "entrada": "09:00",
+          "salida": "13:30",
+          "duracion_h": 4.5,
+          "colacion": false,
+          "colacion_offset": 4
+        },
+        {
+          "ejecutivo": "Ejecutivo 3",
+          "semana": 1,
+          "fecha": "2025-06-02",
+          "dia": "lunes",
+          "libre": false,
+          "entrada": "09:00",
+          "salida": "17:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 3",
+          "semana": 1,
+          "fecha": "2025-06-03",
+          "dia": "martes",
+          "libre": false,
+          "entrada": "09:00",
+          "salida": "17:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 3",
+          "semana": 1,
+          "fecha": "2025-06-04",
+          "dia": "miércoles",
+          "libre": false,
+          "entrada": "09:00",
+          "salida": "17:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 3",
+          "semana": 1,
+          "fecha": "2025-06-05",
+          "dia": "jueves",
+          "libre": false,
+          "entrada": "09:00",
+          "salida": "17:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 3",
+          "semana": 1,
+          "fecha": "2025-06-06",
+          "dia": "viernes",
+          "libre": false,
+          "entrada": "09:00",
+          "salida": "17:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 3",
+          "semana": 1,
+          "fecha": "2025-06-07",
+          "dia": "sábado",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 4",
+          "semana": 1,
+          "fecha": "2025-06-02",
+          "dia": "lunes",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "18:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 4",
+          "semana": 1,
+          "fecha": "2025-06-03",
+          "dia": "martes",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "18:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 4",
+          "semana": 1,
+          "fecha": "2025-06-04",
+          "dia": "miércoles",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "18:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 4",
+          "semana": 1,
+          "fecha": "2025-06-05",
+          "dia": "jueves",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "18:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 4",
+          "semana": 1,
+          "fecha": "2025-06-06",
+          "dia": "viernes",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "18:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 4",
+          "semana": 1,
+          "fecha": "2025-06-07",
+          "dia": "sábado",
+          "libre": false,
+          "entrada": "09:00",
+          "salida": "13:00",
+          "duracion_h": 4,
+          "colacion": false,
+          "colacion_offset": 4
+        },
+        {
+          "ejecutivo": "Ejecutivo 5",
+          "semana": 1,
+          "fecha": "2025-06-02",
+          "dia": "lunes",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "12:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 5",
+          "semana": 1,
+          "fecha": "2025-06-03",
+          "dia": "martes",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "12:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 5",
+          "semana": 1,
+          "fecha": "2025-06-04",
+          "dia": "miércoles",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "12:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 5",
+          "semana": 1,
+          "fecha": "2025-06-05",
+          "dia": "jueves",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "12:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 5",
+          "semana": 1,
+          "fecha": "2025-06-06",
+          "dia": "viernes",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "12:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 5",
+          "semana": 1,
+          "fecha": "2025-06-07",
+          "dia": "sábado",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 6",
+          "semana": 1,
+          "fecha": "2025-06-02",
+          "dia": "lunes",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 6",
+          "semana": 1,
+          "fecha": "2025-06-03",
+          "dia": "martes",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 6",
+          "semana": 1,
+          "fecha": "2025-06-04",
+          "dia": "miércoles",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "18:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 6",
+          "semana": 1,
+          "fecha": "2025-06-05",
+          "dia": "jueves",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "18:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 6",
+          "semana": 1,
+          "fecha": "2025-06-06",
+          "dia": "viernes",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "18:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 6",
+          "semana": 1,
+          "fecha": "2025-06-07",
+          "dia": "sábado",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 1",
+          "semana": 2,
+          "fecha": "2025-06-09",
+          "dia": "lunes",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "12:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 1",
+          "semana": 2,
+          "fecha": "2025-06-10",
+          "dia": "martes",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "12:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 1",
+          "semana": 2,
+          "fecha": "2025-06-11",
+          "dia": "miércoles",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "12:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 1",
+          "semana": 2,
+          "fecha": "2025-06-12",
+          "dia": "jueves",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "12:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 1",
+          "semana": 2,
+          "fecha": "2025-06-13",
+          "dia": "viernes",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "12:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 1",
+          "semana": 2,
+          "fecha": "2025-06-14",
+          "dia": "sábado",
+          "libre": false,
+          "entrada": "09:00",
+          "salida": "13:00",
+          "duracion_h": 4,
+          "colacion": false,
+          "colacion_offset": 4
+        },
+        {
+          "ejecutivo": "Ejecutivo 2",
+          "semana": 2,
+          "fecha": "2025-06-09",
+          "dia": "lunes",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "21:00",
+          "duracion_h": 7.5,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 2",
+          "semana": 2,
+          "fecha": "2025-06-10",
+          "dia": "martes",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "21:00",
+          "duracion_h": 7.5,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 2",
+          "semana": 2,
+          "fecha": "2025-06-11",
+          "dia": "miércoles",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "21:00",
+          "duracion_h": 7.5,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 2",
+          "semana": 2,
+          "fecha": "2025-06-12",
+          "dia": "jueves",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "21:00",
+          "duracion_h": 7.5,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 2",
+          "semana": 2,
+          "fecha": "2025-06-13",
+          "dia": "viernes",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "21:00",
+          "duracion_h": 7.5,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 2",
+          "semana": 2,
+          "fecha": "2025-06-14",
+          "dia": "sábado",
+          "libre": false,
+          "entrada": "09:00",
+          "salida": "13:30",
+          "duracion_h": 4.5,
+          "colacion": false,
+          "colacion_offset": 4
+        },
+        {
+          "ejecutivo": "Ejecutivo 3",
+          "semana": 2,
+          "fecha": "2025-06-09",
+          "dia": "lunes",
+          "libre": false,
+          "entrada": "09:00",
+          "salida": "17:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 3",
+          "semana": 2,
+          "fecha": "2025-06-10",
+          "dia": "martes",
+          "libre": false,
+          "entrada": "09:00",
+          "salida": "17:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 3",
+          "semana": 2,
+          "fecha": "2025-06-11",
+          "dia": "miércoles",
+          "libre": false,
+          "entrada": "09:00",
+          "salida": "17:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 3",
+          "semana": 2,
+          "fecha": "2025-06-12",
+          "dia": "jueves",
+          "libre": false,
+          "entrada": "09:00",
+          "salida": "17:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 3",
+          "semana": 2,
+          "fecha": "2025-06-13",
+          "dia": "viernes",
+          "libre": false,
+          "entrada": "09:00",
+          "salida": "17:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 3",
+          "semana": 2,
+          "fecha": "2025-06-14",
+          "dia": "sábado",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 4",
+          "semana": 2,
+          "fecha": "2025-06-09",
+          "dia": "lunes",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "18:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 4",
+          "semana": 2,
+          "fecha": "2025-06-10",
+          "dia": "martes",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "18:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 4",
+          "semana": 2,
+          "fecha": "2025-06-11",
+          "dia": "miércoles",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "18:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 4",
+          "semana": 2,
+          "fecha": "2025-06-12",
+          "dia": "jueves",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "18:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 4",
+          "semana": 2,
+          "fecha": "2025-06-13",
+          "dia": "viernes",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "18:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 4",
+          "semana": 2,
+          "fecha": "2025-06-14",
+          "dia": "sábado",
+          "libre": false,
+          "entrada": "09:00",
+          "salida": "13:00",
+          "duracion_h": 4,
+          "colacion": false,
+          "colacion_offset": 4
+        },
+        {
+          "ejecutivo": "Ejecutivo 5",
+          "semana": 2,
+          "fecha": "2025-06-09",
+          "dia": "lunes",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "12:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 5",
+          "semana": 2,
+          "fecha": "2025-06-10",
+          "dia": "martes",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "12:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 5",
+          "semana": 2,
+          "fecha": "2025-06-11",
+          "dia": "miércoles",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "12:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 5",
+          "semana": 2,
+          "fecha": "2025-06-12",
+          "dia": "jueves",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "12:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 5",
+          "semana": 2,
+          "fecha": "2025-06-13",
+          "dia": "viernes",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "12:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 5",
+          "semana": 2,
+          "fecha": "2025-06-14",
+          "dia": "sábado",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 6",
+          "semana": 2,
+          "fecha": "2025-06-09",
+          "dia": "lunes",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "18:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 6",
+          "semana": 2,
+          "fecha": "2025-06-10",
+          "dia": "martes",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "18:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 6",
+          "semana": 2,
+          "fecha": "2025-06-11",
+          "dia": "miércoles",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "18:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 6",
+          "semana": 2,
+          "fecha": "2025-06-12",
+          "dia": "jueves",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "18:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 6",
+          "semana": 2,
+          "fecha": "2025-06-13",
+          "dia": "viernes",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "18:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 6",
+          "semana": 2,
+          "fecha": "2025-06-14",
+          "dia": "sábado",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 1",
+          "semana": 3,
+          "fecha": "2025-06-16",
+          "dia": "lunes",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "12:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 1",
+          "semana": 3,
+          "fecha": "2025-06-17",
+          "dia": "martes",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "12:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 1",
+          "semana": 3,
+          "fecha": "2025-06-18",
+          "dia": "miércoles",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "12:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 1",
+          "semana": 3,
+          "fecha": "2025-06-19",
+          "dia": "jueves",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "12:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 1",
+          "semana": 3,
+          "fecha": "2025-06-20",
+          "dia": "viernes",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "12:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 1",
+          "semana": 3,
+          "fecha": "2025-06-21",
+          "dia": "sábado",
+          "libre": false,
+          "entrada": "09:00",
+          "salida": "13:00",
+          "duracion_h": 4,
+          "colacion": false,
+          "colacion_offset": 4
+        },
+        {
+          "ejecutivo": "Ejecutivo 2",
+          "semana": 3,
+          "fecha": "2025-06-16",
+          "dia": "lunes",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "21:00",
+          "duracion_h": 7.5,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 2",
+          "semana": 3,
+          "fecha": "2025-06-17",
+          "dia": "martes",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "21:00",
+          "duracion_h": 7.5,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 2",
+          "semana": 3,
+          "fecha": "2025-06-18",
+          "dia": "miércoles",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "21:00",
+          "duracion_h": 7.5,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 2",
+          "semana": 3,
+          "fecha": "2025-06-19",
+          "dia": "jueves",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "21:00",
+          "duracion_h": 7.5,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 2",
+          "semana": 3,
+          "fecha": "2025-06-20",
+          "dia": "viernes",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "21:00",
+          "duracion_h": 7.5,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 2",
+          "semana": 3,
+          "fecha": "2025-06-21",
+          "dia": "sábado",
+          "libre": false,
+          "entrada": "09:00",
+          "salida": "13:30",
+          "duracion_h": 4.5,
+          "colacion": false,
+          "colacion_offset": 4
+        },
+        {
+          "ejecutivo": "Ejecutivo 3",
+          "semana": 3,
+          "fecha": "2025-06-16",
+          "dia": "lunes",
+          "libre": false,
+          "entrada": "09:00",
+          "salida": "17:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 3",
+          "semana": 3,
+          "fecha": "2025-06-17",
+          "dia": "martes",
+          "libre": false,
+          "entrada": "09:00",
+          "salida": "17:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 3",
+          "semana": 3,
+          "fecha": "2025-06-18",
+          "dia": "miércoles",
+          "libre": false,
+          "entrada": "09:00",
+          "salida": "17:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 3",
+          "semana": 3,
+          "fecha": "2025-06-19",
+          "dia": "jueves",
+          "libre": false,
+          "entrada": "09:00",
+          "salida": "17:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 3",
+          "semana": 3,
+          "fecha": "2025-06-20",
+          "dia": "viernes",
+          "libre": false,
+          "entrada": "09:00",
+          "salida": "17:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 3",
+          "semana": 3,
+          "fecha": "2025-06-21",
+          "dia": "sábado",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 4",
+          "semana": 3,
+          "fecha": "2025-06-16",
+          "dia": "lunes",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "18:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 4",
+          "semana": 3,
+          "fecha": "2025-06-17",
+          "dia": "martes",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "18:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 4",
+          "semana": 3,
+          "fecha": "2025-06-18",
+          "dia": "miércoles",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "18:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 4",
+          "semana": 3,
+          "fecha": "2025-06-19",
+          "dia": "jueves",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "18:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 4",
+          "semana": 3,
+          "fecha": "2025-06-20",
+          "dia": "viernes",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "18:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 4",
+          "semana": 3,
+          "fecha": "2025-06-21",
+          "dia": "sábado",
+          "libre": false,
+          "entrada": "09:00",
+          "salida": "13:00",
+          "duracion_h": 4,
+          "colacion": false,
+          "colacion_offset": 4
+        },
+        {
+          "ejecutivo": "Ejecutivo 5",
+          "semana": 3,
+          "fecha": "2025-06-16",
+          "dia": "lunes",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "12:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 5",
+          "semana": 3,
+          "fecha": "2025-06-17",
+          "dia": "martes",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "12:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 5",
+          "semana": 3,
+          "fecha": "2025-06-18",
+          "dia": "miércoles",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "12:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 5",
+          "semana": 3,
+          "fecha": "2025-06-19",
+          "dia": "jueves",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "12:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 5",
+          "semana": 3,
+          "fecha": "2025-06-20",
+          "dia": "viernes",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "12:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 5",
+          "semana": 3,
+          "fecha": "2025-06-21",
+          "dia": "sábado",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 6",
+          "semana": 3,
+          "fecha": "2025-06-16",
+          "dia": "lunes",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "18:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 6",
+          "semana": 3,
+          "fecha": "2025-06-17",
+          "dia": "martes",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "18:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 6",
+          "semana": 3,
+          "fecha": "2025-06-18",
+          "dia": "miércoles",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "18:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 6",
+          "semana": 3,
+          "fecha": "2025-06-19",
+          "dia": "jueves",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "18:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 6",
+          "semana": 3,
+          "fecha": "2025-06-20",
+          "dia": "viernes",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "18:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 6",
+          "semana": 3,
+          "fecha": "2025-06-21",
+          "dia": "sábado",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 1",
+          "semana": 4,
+          "fecha": "2025-06-23",
+          "dia": "lunes",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "12:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 1",
+          "semana": 4,
+          "fecha": "2025-06-24",
+          "dia": "martes",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "12:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 1",
+          "semana": 4,
+          "fecha": "2025-06-25",
+          "dia": "miércoles",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "12:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 1",
+          "semana": 4,
+          "fecha": "2025-06-26",
+          "dia": "jueves",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "12:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 1",
+          "semana": 4,
+          "fecha": "2025-06-27",
+          "dia": "viernes",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "12:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 1",
+          "semana": 4,
+          "fecha": "2025-06-28",
+          "dia": "sábado",
+          "libre": false,
+          "entrada": "09:00",
+          "salida": "13:00",
+          "duracion_h": 4,
+          "colacion": false,
+          "colacion_offset": 4
+        },
+        {
+          "ejecutivo": "Ejecutivo 2",
+          "semana": 4,
+          "fecha": "2025-06-23",
+          "dia": "lunes",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "21:00",
+          "duracion_h": 7.5,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 2",
+          "semana": 4,
+          "fecha": "2025-06-24",
+          "dia": "martes",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "21:00",
+          "duracion_h": 7.5,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 2",
+          "semana": 4,
+          "fecha": "2025-06-25",
+          "dia": "miércoles",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "21:00",
+          "duracion_h": 7.5,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 2",
+          "semana": 4,
+          "fecha": "2025-06-26",
+          "dia": "jueves",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "21:00",
+          "duracion_h": 7.5,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 2",
+          "semana": 4,
+          "fecha": "2025-06-27",
+          "dia": "viernes",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "21:00",
+          "duracion_h": 7.5,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 2",
+          "semana": 4,
+          "fecha": "2025-06-28",
+          "dia": "sábado",
+          "libre": false,
+          "entrada": "09:00",
+          "salida": "13:30",
+          "duracion_h": 4.5,
+          "colacion": false,
+          "colacion_offset": 4
+        },
+        {
+          "ejecutivo": "Ejecutivo 3",
+          "semana": 4,
+          "fecha": "2025-06-23",
+          "dia": "lunes",
+          "libre": false,
+          "entrada": "09:00",
+          "salida": "17:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 3",
+          "semana": 4,
+          "fecha": "2025-06-24",
+          "dia": "martes",
+          "libre": false,
+          "entrada": "09:00",
+          "salida": "17:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 3",
+          "semana": 4,
+          "fecha": "2025-06-25",
+          "dia": "miércoles",
+          "libre": false,
+          "entrada": "09:00",
+          "salida": "17:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 3",
+          "semana": 4,
+          "fecha": "2025-06-26",
+          "dia": "jueves",
+          "libre": false,
+          "entrada": "09:00",
+          "salida": "17:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 3",
+          "semana": 4,
+          "fecha": "2025-06-27",
+          "dia": "viernes",
+          "libre": false,
+          "entrada": "09:00",
+          "salida": "17:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 3",
+          "semana": 4,
+          "fecha": "2025-06-28",
+          "dia": "sábado",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 4",
+          "semana": 4,
+          "fecha": "2025-06-23",
+          "dia": "lunes",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "18:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 4",
+          "semana": 4,
+          "fecha": "2025-06-24",
+          "dia": "martes",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "18:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 4",
+          "semana": 4,
+          "fecha": "2025-06-25",
+          "dia": "miércoles",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "18:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 4",
+          "semana": 4,
+          "fecha": "2025-06-26",
+          "dia": "jueves",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "18:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 4",
+          "semana": 4,
+          "fecha": "2025-06-27",
+          "dia": "viernes",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "18:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 4",
+          "semana": 4,
+          "fecha": "2025-06-28",
+          "dia": "sábado",
+          "libre": false,
+          "entrada": "09:00",
+          "salida": "13:00",
+          "duracion_h": 4,
+          "colacion": false,
+          "colacion_offset": 4
+        },
+        {
+          "ejecutivo": "Ejecutivo 5",
+          "semana": 4,
+          "fecha": "2025-06-23",
+          "dia": "lunes",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "12:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 5",
+          "semana": 4,
+          "fecha": "2025-06-24",
+          "dia": "martes",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "12:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 5",
+          "semana": 4,
+          "fecha": "2025-06-25",
+          "dia": "miércoles",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "12:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 5",
+          "semana": 4,
+          "fecha": "2025-06-26",
+          "dia": "jueves",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "12:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 5",
+          "semana": 4,
+          "fecha": "2025-06-27",
+          "dia": "viernes",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "12:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 5",
+          "semana": 4,
+          "fecha": "2025-06-28",
+          "dia": "sábado",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 6",
+          "semana": 4,
+          "fecha": "2025-06-23",
+          "dia": "lunes",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "18:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 6",
+          "semana": 4,
+          "fecha": "2025-06-24",
+          "dia": "martes",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "18:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 6",
+          "semana": 4,
+          "fecha": "2025-06-25",
+          "dia": "miércoles",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "18:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 6",
+          "semana": 4,
+          "fecha": "2025-06-26",
+          "dia": "jueves",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "18:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 6",
+          "semana": 4,
+          "fecha": "2025-06-27",
+          "dia": "viernes",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "18:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 6",
+          "semana": 4,
+          "fecha": "2025-06-28",
+          "dia": "sábado",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 1",
+          "semana": 5,
+          "fecha": "2025-06-30",
+          "dia": "lunes",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "12:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 1",
+          "semana": 5,
+          "fecha": "",
+          "dia": "martes",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 1",
+          "semana": 5,
+          "fecha": "",
+          "dia": "miércoles",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 1",
+          "semana": 5,
+          "fecha": "",
+          "dia": "jueves",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 1",
+          "semana": 5,
+          "fecha": "",
+          "dia": "viernes",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 1",
+          "semana": 5,
+          "fecha": "",
+          "dia": "sábado",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 2",
+          "semana": 5,
+          "fecha": "2025-06-30",
+          "dia": "lunes",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "21:00",
+          "duracion_h": 7.5,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 2",
+          "semana": 5,
+          "fecha": "",
+          "dia": "martes",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 2",
+          "semana": 5,
+          "fecha": "",
+          "dia": "miércoles",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 2",
+          "semana": 5,
+          "fecha": "",
+          "dia": "jueves",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 2",
+          "semana": 5,
+          "fecha": "",
+          "dia": "viernes",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 2",
+          "semana": 5,
+          "fecha": "",
+          "dia": "sábado",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 3",
+          "semana": 5,
+          "fecha": "2025-06-30",
+          "dia": "lunes",
+          "libre": false,
+          "entrada": "09:00",
+          "salida": "17:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 3",
+          "semana": 5,
+          "fecha": "",
+          "dia": "martes",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 3",
+          "semana": 5,
+          "fecha": "",
+          "dia": "miércoles",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 3",
+          "semana": 5,
+          "fecha": "",
+          "dia": "jueves",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 3",
+          "semana": 5,
+          "fecha": "",
+          "dia": "viernes",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 3",
+          "semana": 5,
+          "fecha": "",
+          "dia": "sábado",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 4",
+          "semana": 5,
+          "fecha": "2025-06-30",
+          "dia": "lunes",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "18:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 4",
+          "semana": 5,
+          "fecha": "",
+          "dia": "martes",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 4",
+          "semana": 5,
+          "fecha": "",
+          "dia": "miércoles",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 4",
+          "semana": 5,
+          "fecha": "",
+          "dia": "jueves",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 4",
+          "semana": 5,
+          "fecha": "",
+          "dia": "viernes",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 4",
+          "semana": 5,
+          "fecha": "",
+          "dia": "sábado",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 5",
+          "semana": 5,
+          "fecha": "2025-06-30",
+          "dia": "lunes",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "12:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 5",
+          "semana": 5,
+          "fecha": "",
+          "dia": "martes",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 5",
+          "semana": 5,
+          "fecha": "",
+          "dia": "miércoles",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 5",
+          "semana": 5,
+          "fecha": "",
+          "dia": "jueves",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 5",
+          "semana": 5,
+          "fecha": "",
+          "dia": "viernes",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 5",
+          "semana": 5,
+          "fecha": "",
+          "dia": "sábado",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 6",
+          "semana": 5,
+          "fecha": "2025-06-30",
+          "dia": "lunes",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "18:30",
+          "duracion_h": 5,
+          "colacion": true,
+          "colacion_offset": 5
+        },
+        {
+          "ejecutivo": "Ejecutivo 6",
+          "semana": 5,
+          "fecha": "",
+          "dia": "martes",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 6",
+          "semana": 5,
+          "fecha": "",
+          "dia": "miércoles",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 6",
+          "semana": 5,
+          "fecha": "",
+          "dia": "jueves",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 6",
+          "semana": 5,
+          "fecha": "",
+          "dia": "viernes",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 6",
+          "semana": 5,
+          "fecha": "",
+          "dia": "sábado",
+          "libre": true
+        }
+      ]
+    },
+    "ejecutivos": [
+      {
+        "nombre": "Ejecutivo 1",
+        "horas_semana": 42,
+        "tipo": "full"
+      },
+      {
+        "nombre": "Ejecutivo 2",
+        "horas_semana": 42,
+        "tipo": "full"
+      },
+      {
+        "nombre": "Ejecutivo 3",
+        "horas_semana": 42,
+        "tipo": "full"
+      },
+      {
+        "nombre": "Ejecutivo 4",
+        "horas_semana": 42,
+        "tipo": "full"
+      },
+      {
+        "nombre": "Ejecutivo 5",
+        "horas_semana": 25,
+        "tipo": "part"
+      },
+      {
+        "nombre": "Ejecutivo 6",
+        "horas_semana": 25,
+        "tipo": "part"
+      }
+    ]
+  },
+  {
+    "id": "03ed5798",
+    "nombre": "Escenario 27-03",
+    "descripcion": "Prueba para centro médico",
+    "fecha": "2026-03-27 12:56",
+    "deficit_cobertura": 28.35,
+    "params": {
+      "mes": 6,
+      "anio": 2025,
+      "n_ejecutivos": 6,
+      "tiempo": 10,
+      "prod": 0.8,
+      "usab": 0.53,
+      "puestos_max": 4,
+      "turno_min": 4,
+      "turno_max": 9,
+      "apertura_min": 2,
+      "cierre_min": 2
+    },
+    "solver_result": {
+      "deficit_cobertura": 28.35,
+      "dem_sat_profile": {
+        "09:00": 2.0807291666666665,
+        "10:00": 2.3989583333333333,
+        "11:00": 2.252083333333333,
+        "12:00": 1.5177083333333332,
+        "13:00": 0.7588541666666666
+      },
+      "dem_wd_profile": {
+        "07:00": 0.07833333333333332,
+        "08:00": 1.4883333333333333,
+        "09:00": 2.790625,
+        "10:00": 3.6425000000000005,
+        "11:00": 2.99625,
+        "12:00": 2.624166666666667,
+        "13:00": 2.6927083333333335,
+        "13:30": 4,
+        "15:00": 4,
+        "16:00": 4,
+        "17:00": 4,
+        "18:00": 3.0109374999999994,
+        "19:00": 1.2484374999999999,
+        "20:00": 0.09791666666666665
+      },
+      "fin_op": 42,
+      "horas_ejecutivo": {
+        "Ejecutivo 1": {
+          "semana_1": 42,
+          "semana_2": 42,
+          "semana_3": 42,
+          "semana_4": 42,
+          "semana_5": 7.5,
+          "total": 175.5
+        },
+        "Ejecutivo 2": {
+          "semana_1": 40,
+          "semana_2": 40,
+          "semana_3": 40,
+          "semana_4": 40,
+          "semana_5": 8,
+          "total": 168
+        },
+        "Ejecutivo 3": {
+          "semana_1": 40,
+          "semana_2": 40,
+          "semana_3": 40,
+          "semana_4": 40,
+          "semana_5": 8,
+          "total": 168
+        },
+        "Ejecutivo 4": {
+          "semana_1": 40,
+          "semana_2": 40,
+          "semana_3": 40,
+          "semana_4": 40,
+          "semana_5": 8,
+          "total": 168
+        },
+        "Ejecutivo 5": {
+          "semana_1": 24.5,
+          "semana_2": 24.5,
+          "semana_3": 24.5,
+          "semana_4": 24.5,
+          "semana_5": 4,
+          "total": 102
+        },
+        "Ejecutivo 6": {
+          "semana_1": 24,
+          "semana_2": 24,
+          "semana_3": 24,
+          "semana_4": 24,
+          "semana_5": 4,
+          "total": 100
+        }
+      },
+      "inicio_op": 14,
+      "semana_tipo": [
+        {
+          "colacion": true,
+          "dias_libres": [
+            "domingo"
+          ],
+          "dias_trabajo": [
+            "lunes",
+            "martes",
+            "miércoles",
+            "jueves",
+            "viernes",
+            "sábado"
+          ],
+          "duracion_h": 8,
+          "ejecutivo": "Ejecutivo 1",
+          "entradas": {
+            "jueves": "13:00",
+            "lunes": "13:00",
+            "martes": "13:00",
+            "miércoles": "13:00",
+            "sábado": "09:00",
+            "viernes": "13:00"
+          },
+          "salidas": {
+            "jueves": "21:00",
+            "lunes": "21:00",
+            "martes": "21:00",
+            "miércoles": "21:00",
+            "sábado": "13:30",
+            "viernes": "21:00"
+          }
+        },
+        {
+          "colacion": true,
+          "dias_libres": [
+            "sábado",
+            "domingo"
+          ],
+          "dias_trabajo": [
+            "lunes",
+            "martes",
+            "miércoles",
+            "jueves",
+            "viernes"
+          ],
+          "duracion_h": 8.5,
+          "ejecutivo": "Ejecutivo 2",
+          "entradas": {
+            "jueves": "09:00",
+            "lunes": "09:00",
+            "martes": "09:00",
+            "miércoles": "09:00",
+            "viernes": "09:00"
+          },
+          "salidas": {
+            "jueves": "17:30",
+            "lunes": "17:30",
+            "martes": "17:30",
+            "miércoles": "17:30",
+            "viernes": "17:30"
+          }
+        },
+        {
+          "colacion": true,
+          "dias_libres": [
+            "sábado",
+            "domingo"
+          ],
+          "dias_trabajo": [
+            "lunes",
+            "martes",
+            "miércoles",
+            "jueves",
+            "viernes"
+          ],
+          "duracion_h": 8.5,
+          "ejecutivo": "Ejecutivo 3",
+          "entradas": {
+            "jueves": "10:00",
+            "lunes": "10:00",
+            "martes": "10:00",
+            "miércoles": "10:00",
+            "viernes": "10:00"
+          },
+          "salidas": {
+            "jueves": "18:30",
+            "lunes": "18:30",
+            "martes": "18:30",
+            "miércoles": "18:30",
+            "viernes": "18:30"
+          }
+        },
+        {
+          "colacion": true,
+          "dias_libres": [
+            "sábado",
+            "domingo"
+          ],
+          "dias_trabajo": [
+            "lunes",
+            "martes",
+            "miércoles",
+            "jueves",
+            "viernes"
+          ],
+          "duracion_h": 8.5,
+          "ejecutivo": "Ejecutivo 4",
+          "entradas": {
+            "jueves": "10:00",
+            "lunes": "10:00",
+            "martes": "10:00",
+            "miércoles": "10:00",
+            "viernes": "10:00"
+          },
+          "salidas": {
+            "jueves": "18:30",
+            "lunes": "18:30",
+            "martes": "18:30",
+            "miércoles": "18:30",
+            "viernes": "18:30"
+          }
+        },
+        {
+          "colacion": false,
+          "dias_libres": [
+            "domingo"
+          ],
+          "dias_trabajo": [
+            "lunes",
+            "martes",
+            "miércoles",
+            "jueves",
+            "viernes",
+            "sábado"
+          ],
+          "duracion_h": 4,
+          "ejecutivo": "Ejecutivo 5",
+          "entradas": {
+            "jueves": "07:00",
+            "lunes": "07:00",
+            "martes": "07:00",
+            "miércoles": "07:00",
+            "sábado": "09:00",
+            "viernes": "07:00"
+          },
+          "salidas": {
+            "jueves": "11:00",
+            "lunes": "11:00",
+            "martes": "11:00",
+            "miércoles": "11:00",
+            "sábado": "13:30",
+            "viernes": "11:00"
+          }
+        },
+        {
+          "colacion": false,
+          "dias_libres": [
+            "domingo"
+          ],
+          "dias_trabajo": [
+            "lunes",
+            "martes",
+            "miércoles",
+            "jueves",
+            "viernes",
+            "sábado"
+          ],
+          "duracion_h": 4,
+          "ejecutivo": "Ejecutivo 6",
+          "entradas": {
+            "jueves": "07:00",
+            "lunes": "07:00",
+            "martes": "07:00",
+            "miércoles": "07:00",
+            "sábado": "09:00",
+            "viernes": "07:00"
+          },
+          "salidas": {
+            "jueves": "11:00",
+            "lunes": "11:00",
+            "martes": "11:00",
+            "miércoles": "11:00",
+            "sábado": "13:00",
+            "viernes": "11:00"
+          }
+        }
+      ],
+      "semanas": [
+        {
+          "dias": [
+            [
+              "2025-06-02",
+              "lunes"
+            ],
+            [
+              "2025-06-03",
+              "martes"
+            ],
+            [
+              "2025-06-04",
+              "miércoles"
+            ],
+            [
+              "2025-06-05",
+              "jueves"
+            ],
+            [
+              "2025-06-06",
+              "viernes"
+            ],
+            [
+              "2025-06-07",
+              "sábado"
+            ]
+          ],
+          "semana": 1
+        },
+        {
+          "dias": [
+            [
+              "2025-06-09",
+              "lunes"
+            ],
+            [
+              "2025-06-10",
+              "martes"
+            ],
+            [
+              "2025-06-11",
+              "miércoles"
+            ],
+            [
+              "2025-06-12",
+              "jueves"
+            ],
+            [
+              "2025-06-13",
+              "viernes"
+            ],
+            [
+              "2025-06-14",
+              "sábado"
+            ]
+          ],
+          "semana": 2
+        },
+        {
+          "dias": [
+            [
+              "2025-06-16",
+              "lunes"
+            ],
+            [
+              "2025-06-17",
+              "martes"
+            ],
+            [
+              "2025-06-18",
+              "miércoles"
+            ],
+            [
+              "2025-06-19",
+              "jueves"
+            ],
+            [
+              "2025-06-20",
+              "viernes"
+            ],
+            [
+              "2025-06-21",
+              "sábado"
+            ]
+          ],
+          "semana": 3
+        },
+        {
+          "dias": [
+            [
+              "2025-06-23",
+              "lunes"
+            ],
+            [
+              "2025-06-24",
+              "martes"
+            ],
+            [
+              "2025-06-25",
+              "miércoles"
+            ],
+            [
+              "2025-06-26",
+              "jueves"
+            ],
+            [
+              "2025-06-27",
+              "viernes"
+            ],
+            [
+              "2025-06-28",
+              "sábado"
+            ]
+          ],
+          "semana": 4
+        },
+        {
+          "dias": [
+            [
+              "2025-06-30",
+              "lunes"
+            ]
+          ],
+          "semana": 5
+        }
+      ],
+      "shift_types": [
+        {
+          "colacion_offset": null,
+          "duracion_h": 4,
+          "entrada": "07:00",
+          "id": 0,
+          "k": 0,
+          "salida": "11:00"
+        },
+        {
+          "colacion_offset": 8,
+          "duracion_h": 8.5,
+          "entrada": "09:00",
+          "id": 1,
+          "k": 1,
+          "salida": "17:30"
+        },
+        {
+          "colacion_offset": 8,
+          "duracion_h": 8.5,
+          "entrada": "10:00",
+          "id": 2,
+          "k": 2,
+          "salida": "18:30"
+        },
+        {
+          "colacion_offset": 8,
+          "duracion_h": 8,
+          "entrada": "13:00",
+          "id": 3,
+          "k": 3,
+          "salida": "21:00"
+        }
+      ],
+      "solver_status": "Optimal",
+      "status": "ok",
+      "turnos": [
+        {
+          "ejecutivo": "Ejecutivo 1",
+          "semana": 1,
+          "fecha": "2025-06-02",
+          "dia": "lunes",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "21:00",
+          "duracion_h": 7.5,
+          "colacion": true,
+          "colacion_offset": 7
+        },
+        {
+          "ejecutivo": "Ejecutivo 1",
+          "semana": 1,
+          "fecha": "2025-06-03",
+          "dia": "martes",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "21:00",
+          "duracion_h": 7.5,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 1",
+          "semana": 1,
+          "fecha": "2025-06-04",
+          "dia": "miércoles",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "21:00",
+          "duracion_h": 7.5,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 1",
+          "semana": 1,
+          "fecha": "2025-06-05",
+          "dia": "jueves",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "21:00",
+          "duracion_h": 7.5,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 1",
+          "semana": 1,
+          "fecha": "2025-06-06",
+          "dia": "viernes",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "21:00",
+          "duracion_h": 7.5,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 1",
+          "semana": 1,
+          "fecha": "2025-06-07",
+          "dia": "sábado",
+          "libre": false,
+          "entrada": "09:00",
+          "salida": "13:30",
+          "duracion_h": 4.5,
+          "colacion": false,
+          "colacion_offset": 4
+        },
+        {
+          "ejecutivo": "Ejecutivo 2",
+          "semana": 1,
+          "fecha": "2025-06-02",
+          "dia": "lunes",
+          "libre": false,
+          "entrada": "09:00",
+          "salida": "18:00",
+          "duracion_h": 8.5,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 2",
+          "semana": 1,
+          "fecha": "2025-06-03",
+          "dia": "martes",
+          "libre": false,
+          "entrada": "09:00",
+          "salida": "18:00",
+          "duracion_h": 8.5,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 2",
+          "semana": 1,
+          "fecha": "2025-06-04",
+          "dia": "miércoles",
+          "libre": false,
+          "entrada": "09:00",
+          "salida": "18:00",
+          "duracion_h": 8.5,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 2",
+          "semana": 1,
+          "fecha": "2025-06-05",
+          "dia": "jueves",
+          "libre": false,
+          "entrada": "09:00",
+          "salida": "18:00",
+          "duracion_h": 8.5,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 2",
+          "semana": 1,
+          "fecha": "2025-06-06",
+          "dia": "viernes",
+          "libre": false,
+          "entrada": "09:00",
+          "salida": "17:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 2",
+          "semana": 1,
+          "fecha": "2025-06-07",
+          "dia": "sábado",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 3",
+          "semana": 1,
+          "fecha": "2025-06-02",
+          "dia": "lunes",
+          "libre": false,
+          "entrada": "10:00",
+          "salida": "18:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 9
+        },
+        {
+          "ejecutivo": "Ejecutivo 3",
+          "semana": 1,
+          "fecha": "2025-06-03",
+          "dia": "martes",
+          "libre": false,
+          "entrada": "10:00",
+          "salida": "18:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 3",
+          "semana": 1,
+          "fecha": "2025-06-04",
+          "dia": "miércoles",
+          "libre": false,
+          "entrada": "10:00",
+          "salida": "18:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 3",
+          "semana": 1,
+          "fecha": "2025-06-05",
+          "dia": "jueves",
+          "libre": false,
+          "entrada": "10:00",
+          "salida": "18:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 3",
+          "semana": 1,
+          "fecha": "2025-06-06",
+          "dia": "viernes",
+          "libre": false,
+          "entrada": "10:00",
+          "salida": "18:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 3",
+          "semana": 1,
+          "fecha": "2025-06-07",
+          "dia": "sábado",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 4",
+          "semana": 1,
+          "fecha": "2025-06-02",
+          "dia": "lunes",
+          "libre": false,
+          "entrada": "10:00",
+          "salida": "18:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 4",
+          "semana": 1,
+          "fecha": "2025-06-03",
+          "dia": "martes",
+          "libre": false,
+          "entrada": "10:00",
+          "salida": "18:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 4",
+          "semana": 1,
+          "fecha": "2025-06-04",
+          "dia": "miércoles",
+          "libre": false,
+          "entrada": "10:00",
+          "salida": "18:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 4",
+          "semana": 1,
+          "fecha": "2025-06-05",
+          "dia": "jueves",
+          "libre": false,
+          "entrada": "10:00",
+          "salida": "18:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 4",
+          "semana": 1,
+          "fecha": "2025-06-06",
+          "dia": "viernes",
+          "libre": false,
+          "entrada": "10:00",
+          "salida": "18:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 4",
+          "semana": 1,
+          "fecha": "2025-06-07",
+          "dia": "sábado",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 5",
+          "semana": 1,
+          "fecha": "2025-06-02",
+          "dia": "lunes",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "11:00",
+          "duracion_h": 4,
+          "colacion": false,
+          "colacion_offset": 4
+        },
+        {
+          "ejecutivo": "Ejecutivo 5",
+          "semana": 1,
+          "fecha": "2025-06-03",
+          "dia": "martes",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "11:00",
+          "duracion_h": 4,
+          "colacion": false,
+          "colacion_offset": 4
+        },
+        {
+          "ejecutivo": "Ejecutivo 5",
+          "semana": 1,
+          "fecha": "2025-06-04",
+          "dia": "miércoles",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "11:00",
+          "duracion_h": 4,
+          "colacion": false,
+          "colacion_offset": 4
+        },
+        {
+          "ejecutivo": "Ejecutivo 5",
+          "semana": 1,
+          "fecha": "2025-06-05",
+          "dia": "jueves",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "11:00",
+          "duracion_h": 4,
+          "colacion": false,
+          "colacion_offset": 4
+        },
+        {
+          "ejecutivo": "Ejecutivo 5",
+          "semana": 1,
+          "fecha": "2025-06-06",
+          "dia": "viernes",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "11:00",
+          "duracion_h": 4,
+          "colacion": false,
+          "colacion_offset": 4
+        },
+        {
+          "ejecutivo": "Ejecutivo 5",
+          "semana": 1,
+          "fecha": "2025-06-07",
+          "dia": "sábado",
+          "libre": false,
+          "entrada": "09:00",
+          "salida": "13:30",
+          "duracion_h": 4.5,
+          "colacion": false,
+          "colacion_offset": 4
+        },
+        {
+          "ejecutivo": "Ejecutivo 6",
+          "semana": 1,
+          "fecha": "2025-06-02",
+          "dia": "lunes",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "11:00",
+          "duracion_h": 4,
+          "colacion": false,
+          "colacion_offset": 4
+        },
+        {
+          "ejecutivo": "Ejecutivo 6",
+          "semana": 1,
+          "fecha": "2025-06-03",
+          "dia": "martes",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "11:00",
+          "duracion_h": 4,
+          "colacion": false,
+          "colacion_offset": 4
+        },
+        {
+          "ejecutivo": "Ejecutivo 6",
+          "semana": 1,
+          "fecha": "2025-06-04",
+          "dia": "miércoles",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "11:00",
+          "duracion_h": 4,
+          "colacion": false,
+          "colacion_offset": 4
+        },
+        {
+          "ejecutivo": "Ejecutivo 6",
+          "semana": 1,
+          "fecha": "2025-06-05",
+          "dia": "jueves",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "11:00",
+          "duracion_h": 4,
+          "colacion": false,
+          "colacion_offset": 4
+        },
+        {
+          "ejecutivo": "Ejecutivo 6",
+          "semana": 1,
+          "fecha": "2025-06-06",
+          "dia": "viernes",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "11:00",
+          "duracion_h": 4,
+          "colacion": false,
+          "colacion_offset": 4
+        },
+        {
+          "ejecutivo": "Ejecutivo 6",
+          "semana": 1,
+          "fecha": "2025-06-07",
+          "dia": "sábado",
+          "libre": false,
+          "entrada": "09:00",
+          "salida": "13:00",
+          "duracion_h": 4,
+          "colacion": false,
+          "colacion_offset": 4
+        },
+        {
+          "ejecutivo": "Ejecutivo 1",
+          "semana": 2,
+          "fecha": "2025-06-09",
+          "dia": "lunes",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "21:00",
+          "duracion_h": 7.5,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 1",
+          "semana": 2,
+          "fecha": "2025-06-10",
+          "dia": "martes",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "21:00",
+          "duracion_h": 7.5,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 1",
+          "semana": 2,
+          "fecha": "2025-06-11",
+          "dia": "miércoles",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "21:00",
+          "duracion_h": 7.5,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 1",
+          "semana": 2,
+          "fecha": "2025-06-12",
+          "dia": "jueves",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "21:00",
+          "duracion_h": 7.5,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 1",
+          "semana": 2,
+          "fecha": "2025-06-13",
+          "dia": "viernes",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "21:00",
+          "duracion_h": 7.5,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 1",
+          "semana": 2,
+          "fecha": "2025-06-14",
+          "dia": "sábado",
+          "libre": false,
+          "entrada": "09:00",
+          "salida": "13:30",
+          "duracion_h": 4.5,
+          "colacion": false,
+          "colacion_offset": 4
+        },
+        {
+          "ejecutivo": "Ejecutivo 2",
+          "semana": 2,
+          "fecha": "2025-06-09",
+          "dia": "lunes",
+          "libre": false,
+          "entrada": "09:00",
+          "salida": "17:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 2",
+          "semana": 2,
+          "fecha": "2025-06-10",
+          "dia": "martes",
+          "libre": false,
+          "entrada": "09:00",
+          "salida": "17:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 2",
+          "semana": 2,
+          "fecha": "2025-06-11",
+          "dia": "miércoles",
+          "libre": false,
+          "entrada": "09:00",
+          "salida": "17:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 2",
+          "semana": 2,
+          "fecha": "2025-06-12",
+          "dia": "jueves",
+          "libre": false,
+          "entrada": "09:00",
+          "salida": "17:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 2",
+          "semana": 2,
+          "fecha": "2025-06-13",
+          "dia": "viernes",
+          "libre": false,
+          "entrada": "09:00",
+          "salida": "17:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 2",
+          "semana": 2,
+          "fecha": "2025-06-14",
+          "dia": "sábado",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 3",
+          "semana": 2,
+          "fecha": "2025-06-09",
+          "dia": "lunes",
+          "libre": false,
+          "entrada": "10:00",
+          "salida": "18:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 3",
+          "semana": 2,
+          "fecha": "2025-06-10",
+          "dia": "martes",
+          "libre": false,
+          "entrada": "10:00",
+          "salida": "18:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 3",
+          "semana": 2,
+          "fecha": "2025-06-11",
+          "dia": "miércoles",
+          "libre": false,
+          "entrada": "10:00",
+          "salida": "18:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 3",
+          "semana": 2,
+          "fecha": "2025-06-12",
+          "dia": "jueves",
+          "libre": false,
+          "entrada": "10:00",
+          "salida": "18:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 3",
+          "semana": 2,
+          "fecha": "2025-06-13",
+          "dia": "viernes",
+          "libre": false,
+          "entrada": "10:00",
+          "salida": "18:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 3",
+          "semana": 2,
+          "fecha": "2025-06-14",
+          "dia": "sábado",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 4",
+          "semana": 2,
+          "fecha": "2025-06-09",
+          "dia": "lunes",
+          "libre": false,
+          "entrada": "10:00",
+          "salida": "18:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 4",
+          "semana": 2,
+          "fecha": "2025-06-10",
+          "dia": "martes",
+          "libre": false,
+          "entrada": "10:00",
+          "salida": "18:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 4",
+          "semana": 2,
+          "fecha": "2025-06-11",
+          "dia": "miércoles",
+          "libre": false,
+          "entrada": "10:00",
+          "salida": "18:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 4",
+          "semana": 2,
+          "fecha": "2025-06-12",
+          "dia": "jueves",
+          "libre": false,
+          "entrada": "10:00",
+          "salida": "18:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 4",
+          "semana": 2,
+          "fecha": "2025-06-13",
+          "dia": "viernes",
+          "libre": false,
+          "entrada": "10:00",
+          "salida": "18:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 4",
+          "semana": 2,
+          "fecha": "2025-06-14",
+          "dia": "sábado",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 5",
+          "semana": 2,
+          "fecha": "2025-06-09",
+          "dia": "lunes",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "11:00",
+          "duracion_h": 4,
+          "colacion": false,
+          "colacion_offset": 4
+        },
+        {
+          "ejecutivo": "Ejecutivo 5",
+          "semana": 2,
+          "fecha": "2025-06-10",
+          "dia": "martes",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "11:00",
+          "duracion_h": 4,
+          "colacion": false,
+          "colacion_offset": 4
+        },
+        {
+          "ejecutivo": "Ejecutivo 5",
+          "semana": 2,
+          "fecha": "2025-06-11",
+          "dia": "miércoles",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "11:00",
+          "duracion_h": 4,
+          "colacion": false,
+          "colacion_offset": 4
+        },
+        {
+          "ejecutivo": "Ejecutivo 5",
+          "semana": 2,
+          "fecha": "2025-06-12",
+          "dia": "jueves",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "11:00",
+          "duracion_h": 4,
+          "colacion": false,
+          "colacion_offset": 4
+        },
+        {
+          "ejecutivo": "Ejecutivo 5",
+          "semana": 2,
+          "fecha": "2025-06-13",
+          "dia": "viernes",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "11:00",
+          "duracion_h": 4,
+          "colacion": false,
+          "colacion_offset": 4
+        },
+        {
+          "ejecutivo": "Ejecutivo 5",
+          "semana": 2,
+          "fecha": "2025-06-14",
+          "dia": "sábado",
+          "libre": false,
+          "entrada": "09:00",
+          "salida": "13:30",
+          "duracion_h": 4.5,
+          "colacion": false,
+          "colacion_offset": 4
+        },
+        {
+          "ejecutivo": "Ejecutivo 6",
+          "semana": 2,
+          "fecha": "2025-06-09",
+          "dia": "lunes",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "11:00",
+          "duracion_h": 4,
+          "colacion": false,
+          "colacion_offset": 4
+        },
+        {
+          "ejecutivo": "Ejecutivo 6",
+          "semana": 2,
+          "fecha": "2025-06-10",
+          "dia": "martes",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "11:00",
+          "duracion_h": 4,
+          "colacion": false,
+          "colacion_offset": 4
+        },
+        {
+          "ejecutivo": "Ejecutivo 6",
+          "semana": 2,
+          "fecha": "2025-06-11",
+          "dia": "miércoles",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "11:00",
+          "duracion_h": 4,
+          "colacion": false,
+          "colacion_offset": 4
+        },
+        {
+          "ejecutivo": "Ejecutivo 6",
+          "semana": 2,
+          "fecha": "2025-06-12",
+          "dia": "jueves",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "11:00",
+          "duracion_h": 4,
+          "colacion": false,
+          "colacion_offset": 4
+        },
+        {
+          "ejecutivo": "Ejecutivo 6",
+          "semana": 2,
+          "fecha": "2025-06-13",
+          "dia": "viernes",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "11:00",
+          "duracion_h": 4,
+          "colacion": false,
+          "colacion_offset": 4
+        },
+        {
+          "ejecutivo": "Ejecutivo 6",
+          "semana": 2,
+          "fecha": "2025-06-14",
+          "dia": "sábado",
+          "libre": false,
+          "entrada": "09:00",
+          "salida": "13:00",
+          "duracion_h": 4,
+          "colacion": false,
+          "colacion_offset": 4
+        },
+        {
+          "ejecutivo": "Ejecutivo 1",
+          "semana": 3,
+          "fecha": "2025-06-16",
+          "dia": "lunes",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "21:00",
+          "duracion_h": 7.5,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 1",
+          "semana": 3,
+          "fecha": "2025-06-17",
+          "dia": "martes",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "21:00",
+          "duracion_h": 7.5,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 1",
+          "semana": 3,
+          "fecha": "2025-06-18",
+          "dia": "miércoles",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "21:00",
+          "duracion_h": 7.5,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 1",
+          "semana": 3,
+          "fecha": "2025-06-19",
+          "dia": "jueves",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "21:00",
+          "duracion_h": 7.5,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 1",
+          "semana": 3,
+          "fecha": "2025-06-20",
+          "dia": "viernes",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "21:00",
+          "duracion_h": 7.5,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 1",
+          "semana": 3,
+          "fecha": "2025-06-21",
+          "dia": "sábado",
+          "libre": false,
+          "entrada": "09:00",
+          "salida": "13:30",
+          "duracion_h": 4.5,
+          "colacion": false,
+          "colacion_offset": 4
+        },
+        {
+          "ejecutivo": "Ejecutivo 2",
+          "semana": 3,
+          "fecha": "2025-06-16",
+          "dia": "lunes",
+          "libre": false,
+          "entrada": "09:00",
+          "salida": "17:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 2",
+          "semana": 3,
+          "fecha": "2025-06-17",
+          "dia": "martes",
+          "libre": false,
+          "entrada": "09:00",
+          "salida": "17:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 2",
+          "semana": 3,
+          "fecha": "2025-06-18",
+          "dia": "miércoles",
+          "libre": false,
+          "entrada": "09:00",
+          "salida": "17:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 2",
+          "semana": 3,
+          "fecha": "2025-06-19",
+          "dia": "jueves",
+          "libre": false,
+          "entrada": "09:00",
+          "salida": "17:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 2",
+          "semana": 3,
+          "fecha": "2025-06-20",
+          "dia": "viernes",
+          "libre": false,
+          "entrada": "09:00",
+          "salida": "17:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 2",
+          "semana": 3,
+          "fecha": "2025-06-21",
+          "dia": "sábado",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 3",
+          "semana": 3,
+          "fecha": "2025-06-16",
+          "dia": "lunes",
+          "libre": false,
+          "entrada": "10:00",
+          "salida": "18:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 3",
+          "semana": 3,
+          "fecha": "2025-06-17",
+          "dia": "martes",
+          "libre": false,
+          "entrada": "10:00",
+          "salida": "18:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 3",
+          "semana": 3,
+          "fecha": "2025-06-18",
+          "dia": "miércoles",
+          "libre": false,
+          "entrada": "10:00",
+          "salida": "18:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 3",
+          "semana": 3,
+          "fecha": "2025-06-19",
+          "dia": "jueves",
+          "libre": false,
+          "entrada": "10:00",
+          "salida": "18:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 3",
+          "semana": 3,
+          "fecha": "2025-06-20",
+          "dia": "viernes",
+          "libre": false,
+          "entrada": "10:00",
+          "salida": "18:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 3",
+          "semana": 3,
+          "fecha": "2025-06-21",
+          "dia": "sábado",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 4",
+          "semana": 3,
+          "fecha": "2025-06-16",
+          "dia": "lunes",
+          "libre": false,
+          "entrada": "10:00",
+          "salida": "18:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 4",
+          "semana": 3,
+          "fecha": "2025-06-17",
+          "dia": "martes",
+          "libre": false,
+          "entrada": "10:00",
+          "salida": "18:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 4",
+          "semana": 3,
+          "fecha": "2025-06-18",
+          "dia": "miércoles",
+          "libre": false,
+          "entrada": "10:00",
+          "salida": "18:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 4",
+          "semana": 3,
+          "fecha": "2025-06-19",
+          "dia": "jueves",
+          "libre": false,
+          "entrada": "10:00",
+          "salida": "18:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 4",
+          "semana": 3,
+          "fecha": "2025-06-20",
+          "dia": "viernes",
+          "libre": false,
+          "entrada": "10:00",
+          "salida": "18:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 4",
+          "semana": 3,
+          "fecha": "2025-06-21",
+          "dia": "sábado",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 5",
+          "semana": 3,
+          "fecha": "2025-06-16",
+          "dia": "lunes",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "11:00",
+          "duracion_h": 4,
+          "colacion": false,
+          "colacion_offset": 4
+        },
+        {
+          "ejecutivo": "Ejecutivo 5",
+          "semana": 3,
+          "fecha": "2025-06-17",
+          "dia": "martes",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "11:00",
+          "duracion_h": 4,
+          "colacion": false,
+          "colacion_offset": 4
+        },
+        {
+          "ejecutivo": "Ejecutivo 5",
+          "semana": 3,
+          "fecha": "2025-06-18",
+          "dia": "miércoles",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "11:00",
+          "duracion_h": 4,
+          "colacion": false,
+          "colacion_offset": 4
+        },
+        {
+          "ejecutivo": "Ejecutivo 5",
+          "semana": 3,
+          "fecha": "2025-06-19",
+          "dia": "jueves",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "11:00",
+          "duracion_h": 4,
+          "colacion": false,
+          "colacion_offset": 4
+        },
+        {
+          "ejecutivo": "Ejecutivo 5",
+          "semana": 3,
+          "fecha": "2025-06-20",
+          "dia": "viernes",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "11:00",
+          "duracion_h": 4,
+          "colacion": false,
+          "colacion_offset": 4
+        },
+        {
+          "ejecutivo": "Ejecutivo 5",
+          "semana": 3,
+          "fecha": "2025-06-21",
+          "dia": "sábado",
+          "libre": false,
+          "entrada": "09:00",
+          "salida": "13:30",
+          "duracion_h": 4.5,
+          "colacion": false,
+          "colacion_offset": 4
+        },
+        {
+          "ejecutivo": "Ejecutivo 6",
+          "semana": 3,
+          "fecha": "2025-06-16",
+          "dia": "lunes",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "11:00",
+          "duracion_h": 4,
+          "colacion": false,
+          "colacion_offset": 4
+        },
+        {
+          "ejecutivo": "Ejecutivo 6",
+          "semana": 3,
+          "fecha": "2025-06-17",
+          "dia": "martes",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "11:00",
+          "duracion_h": 4,
+          "colacion": false,
+          "colacion_offset": 4
+        },
+        {
+          "ejecutivo": "Ejecutivo 6",
+          "semana": 3,
+          "fecha": "2025-06-18",
+          "dia": "miércoles",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "11:00",
+          "duracion_h": 4,
+          "colacion": false,
+          "colacion_offset": 4
+        },
+        {
+          "ejecutivo": "Ejecutivo 6",
+          "semana": 3,
+          "fecha": "2025-06-19",
+          "dia": "jueves",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "11:00",
+          "duracion_h": 4,
+          "colacion": false,
+          "colacion_offset": 4
+        },
+        {
+          "ejecutivo": "Ejecutivo 6",
+          "semana": 3,
+          "fecha": "2025-06-20",
+          "dia": "viernes",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "11:00",
+          "duracion_h": 4,
+          "colacion": false,
+          "colacion_offset": 4
+        },
+        {
+          "ejecutivo": "Ejecutivo 6",
+          "semana": 3,
+          "fecha": "2025-06-21",
+          "dia": "sábado",
+          "libre": false,
+          "entrada": "09:00",
+          "salida": "13:00",
+          "duracion_h": 4,
+          "colacion": false,
+          "colacion_offset": 4
+        },
+        {
+          "ejecutivo": "Ejecutivo 1",
+          "semana": 4,
+          "fecha": "2025-06-23",
+          "dia": "lunes",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "21:00",
+          "duracion_h": 7.5,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 1",
+          "semana": 4,
+          "fecha": "2025-06-24",
+          "dia": "martes",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "21:00",
+          "duracion_h": 7.5,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 1",
+          "semana": 4,
+          "fecha": "2025-06-25",
+          "dia": "miércoles",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "21:00",
+          "duracion_h": 7.5,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 1",
+          "semana": 4,
+          "fecha": "2025-06-26",
+          "dia": "jueves",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "21:00",
+          "duracion_h": 7.5,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 1",
+          "semana": 4,
+          "fecha": "2025-06-27",
+          "dia": "viernes",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "21:00",
+          "duracion_h": 7.5,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 1",
+          "semana": 4,
+          "fecha": "2025-06-28",
+          "dia": "sábado",
+          "libre": false,
+          "entrada": "09:00",
+          "salida": "13:30",
+          "duracion_h": 4.5,
+          "colacion": false,
+          "colacion_offset": 4
+        },
+        {
+          "ejecutivo": "Ejecutivo 2",
+          "semana": 4,
+          "fecha": "2025-06-23",
+          "dia": "lunes",
+          "libre": false,
+          "entrada": "09:00",
+          "salida": "17:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 2",
+          "semana": 4,
+          "fecha": "2025-06-24",
+          "dia": "martes",
+          "libre": false,
+          "entrada": "09:00",
+          "salida": "17:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 2",
+          "semana": 4,
+          "fecha": "2025-06-25",
+          "dia": "miércoles",
+          "libre": false,
+          "entrada": "09:00",
+          "salida": "17:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 2",
+          "semana": 4,
+          "fecha": "2025-06-26",
+          "dia": "jueves",
+          "libre": false,
+          "entrada": "09:00",
+          "salida": "17:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 2",
+          "semana": 4,
+          "fecha": "2025-06-27",
+          "dia": "viernes",
+          "libre": false,
+          "entrada": "09:00",
+          "salida": "17:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 2",
+          "semana": 4,
+          "fecha": "2025-06-28",
+          "dia": "sábado",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 3",
+          "semana": 4,
+          "fecha": "2025-06-23",
+          "dia": "lunes",
+          "libre": false,
+          "entrada": "10:00",
+          "salida": "18:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 3",
+          "semana": 4,
+          "fecha": "2025-06-24",
+          "dia": "martes",
+          "libre": false,
+          "entrada": "10:00",
+          "salida": "18:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 3",
+          "semana": 4,
+          "fecha": "2025-06-25",
+          "dia": "miércoles",
+          "libre": false,
+          "entrada": "10:00",
+          "salida": "18:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 3",
+          "semana": 4,
+          "fecha": "2025-06-26",
+          "dia": "jueves",
+          "libre": false,
+          "entrada": "10:00",
+          "salida": "18:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 3",
+          "semana": 4,
+          "fecha": "2025-06-27",
+          "dia": "viernes",
+          "libre": false,
+          "entrada": "10:00",
+          "salida": "18:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 3",
+          "semana": 4,
+          "fecha": "2025-06-28",
+          "dia": "sábado",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 4",
+          "semana": 4,
+          "fecha": "2025-06-23",
+          "dia": "lunes",
+          "libre": false,
+          "entrada": "10:00",
+          "salida": "18:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 4",
+          "semana": 4,
+          "fecha": "2025-06-24",
+          "dia": "martes",
+          "libre": false,
+          "entrada": "10:00",
+          "salida": "18:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 4",
+          "semana": 4,
+          "fecha": "2025-06-25",
+          "dia": "miércoles",
+          "libre": false,
+          "entrada": "10:00",
+          "salida": "18:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 4",
+          "semana": 4,
+          "fecha": "2025-06-26",
+          "dia": "jueves",
+          "libre": false,
+          "entrada": "10:00",
+          "salida": "18:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 4",
+          "semana": 4,
+          "fecha": "2025-06-27",
+          "dia": "viernes",
+          "libre": false,
+          "entrada": "10:00",
+          "salida": "18:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 4",
+          "semana": 4,
+          "fecha": "2025-06-28",
+          "dia": "sábado",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 5",
+          "semana": 4,
+          "fecha": "2025-06-23",
+          "dia": "lunes",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "11:00",
+          "duracion_h": 4,
+          "colacion": false,
+          "colacion_offset": 4
+        },
+        {
+          "ejecutivo": "Ejecutivo 5",
+          "semana": 4,
+          "fecha": "2025-06-24",
+          "dia": "martes",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "11:00",
+          "duracion_h": 4,
+          "colacion": false,
+          "colacion_offset": 4
+        },
+        {
+          "ejecutivo": "Ejecutivo 5",
+          "semana": 4,
+          "fecha": "2025-06-25",
+          "dia": "miércoles",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "11:00",
+          "duracion_h": 4,
+          "colacion": false,
+          "colacion_offset": 4
+        },
+        {
+          "ejecutivo": "Ejecutivo 5",
+          "semana": 4,
+          "fecha": "2025-06-26",
+          "dia": "jueves",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "11:00",
+          "duracion_h": 4,
+          "colacion": false,
+          "colacion_offset": 4
+        },
+        {
+          "ejecutivo": "Ejecutivo 5",
+          "semana": 4,
+          "fecha": "2025-06-27",
+          "dia": "viernes",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "11:00",
+          "duracion_h": 4,
+          "colacion": false,
+          "colacion_offset": 4
+        },
+        {
+          "ejecutivo": "Ejecutivo 5",
+          "semana": 4,
+          "fecha": "2025-06-28",
+          "dia": "sábado",
+          "libre": false,
+          "entrada": "09:00",
+          "salida": "13:30",
+          "duracion_h": 4.5,
+          "colacion": false,
+          "colacion_offset": 4
+        },
+        {
+          "ejecutivo": "Ejecutivo 6",
+          "semana": 4,
+          "fecha": "2025-06-23",
+          "dia": "lunes",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "11:00",
+          "duracion_h": 4,
+          "colacion": false,
+          "colacion_offset": 4
+        },
+        {
+          "ejecutivo": "Ejecutivo 6",
+          "semana": 4,
+          "fecha": "2025-06-24",
+          "dia": "martes",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "11:00",
+          "duracion_h": 4,
+          "colacion": false,
+          "colacion_offset": 4
+        },
+        {
+          "ejecutivo": "Ejecutivo 6",
+          "semana": 4,
+          "fecha": "2025-06-25",
+          "dia": "miércoles",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "11:00",
+          "duracion_h": 4,
+          "colacion": false,
+          "colacion_offset": 4
+        },
+        {
+          "ejecutivo": "Ejecutivo 6",
+          "semana": 4,
+          "fecha": "2025-06-26",
+          "dia": "jueves",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "11:00",
+          "duracion_h": 4,
+          "colacion": false,
+          "colacion_offset": 4
+        },
+        {
+          "ejecutivo": "Ejecutivo 6",
+          "semana": 4,
+          "fecha": "2025-06-27",
+          "dia": "viernes",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "11:00",
+          "duracion_h": 4,
+          "colacion": false,
+          "colacion_offset": 4
+        },
+        {
+          "ejecutivo": "Ejecutivo 6",
+          "semana": 4,
+          "fecha": "2025-06-28",
+          "dia": "sábado",
+          "libre": false,
+          "entrada": "09:00",
+          "salida": "13:00",
+          "duracion_h": 4,
+          "colacion": false,
+          "colacion_offset": 4
+        },
+        {
+          "ejecutivo": "Ejecutivo 1",
+          "semana": 5,
+          "fecha": "2025-06-30",
+          "dia": "lunes",
+          "libre": false,
+          "entrada": "13:00",
+          "salida": "21:00",
+          "duracion_h": 7.5,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 1",
+          "semana": 5,
+          "fecha": "",
+          "dia": "martes",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 1",
+          "semana": 5,
+          "fecha": "",
+          "dia": "miércoles",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 1",
+          "semana": 5,
+          "fecha": "",
+          "dia": "jueves",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 1",
+          "semana": 5,
+          "fecha": "",
+          "dia": "viernes",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 1",
+          "semana": 5,
+          "fecha": "",
+          "dia": "sábado",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 2",
+          "semana": 5,
+          "fecha": "2025-06-30",
+          "dia": "lunes",
+          "libre": false,
+          "entrada": "09:00",
+          "salida": "17:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 2",
+          "semana": 5,
+          "fecha": "",
+          "dia": "martes",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 2",
+          "semana": 5,
+          "fecha": "",
+          "dia": "miércoles",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 2",
+          "semana": 5,
+          "fecha": "",
+          "dia": "jueves",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 2",
+          "semana": 5,
+          "fecha": "",
+          "dia": "viernes",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 2",
+          "semana": 5,
+          "fecha": "",
+          "dia": "sábado",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 3",
+          "semana": 5,
+          "fecha": "2025-06-30",
+          "dia": "lunes",
+          "libre": false,
+          "entrada": "10:00",
+          "salida": "18:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 3",
+          "semana": 5,
+          "fecha": "",
+          "dia": "martes",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 3",
+          "semana": 5,
+          "fecha": "",
+          "dia": "miércoles",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 3",
+          "semana": 5,
+          "fecha": "",
+          "dia": "jueves",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 3",
+          "semana": 5,
+          "fecha": "",
+          "dia": "viernes",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 3",
+          "semana": 5,
+          "fecha": "",
+          "dia": "sábado",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 4",
+          "semana": 5,
+          "fecha": "2025-06-30",
+          "dia": "lunes",
+          "libre": false,
+          "entrada": "10:00",
+          "salida": "18:30",
+          "duracion_h": 8,
+          "colacion": true,
+          "colacion_offset": 8
+        },
+        {
+          "ejecutivo": "Ejecutivo 4",
+          "semana": 5,
+          "fecha": "",
+          "dia": "martes",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 4",
+          "semana": 5,
+          "fecha": "",
+          "dia": "miércoles",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 4",
+          "semana": 5,
+          "fecha": "",
+          "dia": "jueves",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 4",
+          "semana": 5,
+          "fecha": "",
+          "dia": "viernes",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 4",
+          "semana": 5,
+          "fecha": "",
+          "dia": "sábado",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 5",
+          "semana": 5,
+          "fecha": "2025-06-30",
+          "dia": "lunes",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "11:00",
+          "duracion_h": 4,
+          "colacion": false,
+          "colacion_offset": 4
+        },
+        {
+          "ejecutivo": "Ejecutivo 5",
+          "semana": 5,
+          "fecha": "",
+          "dia": "martes",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 5",
+          "semana": 5,
+          "fecha": "",
+          "dia": "miércoles",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 5",
+          "semana": 5,
+          "fecha": "",
+          "dia": "jueves",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 5",
+          "semana": 5,
+          "fecha": "",
+          "dia": "viernes",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 5",
+          "semana": 5,
+          "fecha": "",
+          "dia": "sábado",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 6",
+          "semana": 5,
+          "fecha": "2025-06-30",
+          "dia": "lunes",
+          "libre": false,
+          "entrada": "07:00",
+          "salida": "11:00",
+          "duracion_h": 4,
+          "colacion": false,
+          "colacion_offset": 4
+        },
+        {
+          "ejecutivo": "Ejecutivo 6",
+          "semana": 5,
+          "fecha": "",
+          "dia": "martes",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 6",
+          "semana": 5,
+          "fecha": "",
+          "dia": "miércoles",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 6",
+          "semana": 5,
+          "fecha": "",
+          "dia": "jueves",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 6",
+          "semana": 5,
+          "fecha": "",
+          "dia": "viernes",
+          "libre": true
+        },
+        {
+          "ejecutivo": "Ejecutivo 6",
+          "semana": 5,
+          "fecha": "",
+          "dia": "sábado",
+          "libre": true
+        }
+      ]
+    },
+    "ejecutivos": [
+      {
+        "nombre": "Ejecutivo 1",
+        "horas_semana": 42,
+        "tipo": "full"
+      },
+      {
+        "nombre": "Ejecutivo 2",
+        "horas_semana": 42,
+        "tipo": "full"
+      },
+      {
+        "nombre": "Ejecutivo 3",
+        "horas_semana": 42,
+        "tipo": "full"
+      },
+      {
+        "nombre": "Ejecutivo 4",
+        "horas_semana": 42,
+        "tipo": "full"
+      },
+      {
+        "nombre": "Ejecutivo 5",
+        "horas_semana": 25,
+        "tipo": "part"
+      },
+      {
+        "nombre": "Ejecutivo 6",
+        "horas_semana": 25,
+        "tipo": "part"
+      }
+    ]
+  },
+  {
     "id": "2240bd3e",
     "nombre": "Prueba 2",
     "descripcion": "prueba 2",

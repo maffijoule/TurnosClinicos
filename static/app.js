@@ -397,8 +397,10 @@ const C = {
   mes: null, anio: null,
   puestos_max: 4, turno_min: 4, turno_max: 9,
   horas_min_ejec: 20,
-  apertura_min: 2, cierre_min: 2, sabado_min: 2,
+  apertura_min: 2, cierre_min: 2,
+  apertura_min_sat: 2, cierre_min_sat: 2,
   hora_apertura: 7, hora_cierre: 21,
+  hora_apertura_sat: 9, hora_cierre_sat: 14,
 };
 
 const MESES = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
@@ -437,7 +439,35 @@ function switchSubtab(tab) {
   renderContentForCurrentTab();
 }
 
-function switchModulo(m) { /* placeholder for hospitalizado */ }
+function switchModulo(m) {
+  // Actualizar tabs del topbar
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  // Marcar el tab activo por data-modulo en vez de depender de event.target
+  document.querySelectorAll('.tab-btn').forEach(b => {
+    if (b.getAttribute('data-modulo') === m) b.classList.add('active');
+  });
+
+  if (m === 'ambulatorio') {
+    // Mostrar sidebar ambulatorio, ocultar hospitalizado
+    ['demanda', 'ejecutivos', 'config', 'modelos'].forEach(t => {
+      const btn = document.getElementById('st-' + t);
+      if (btn) btn.style.display = '';
+    });
+    document.getElementById('panel-hospitalizado').style.display = 'none';
+    switchSubtab(currentSubtab || 'demanda');
+  } else if (m === 'hospitalizado') {
+    // Ocultar subtabs ambulatorio, mostrar panel hospitalizado
+    ['demanda', 'ejecutivos', 'config', 'modelos'].forEach(t => {
+      const btn = document.getElementById('st-' + t);
+      if (btn) btn.style.display = 'none';
+      const panel = document.getElementById('panel-' + t);
+      if (panel) panel.style.display = 'none';
+    });
+    document.getElementById('panel-hospitalizado').style.display = '';
+    renderHospSidebar();
+    renderHospContent();
+  }
+}
 
 function renderContentForCurrentTab() {
   if (currentSubtab === 'demanda' && S.resultado) renderResultado();
@@ -480,7 +510,10 @@ function parseConfigSheet(raw) {
   if (map['hora_cierre'] || map['cierre_hora']) { C.hora_cierre = +(map['hora_cierre'] || map['cierre_hora']); const eCi = document.getElementById('cfg-hci'); if (eCi) { eCi.value = C.hora_cierre; document.getElementById('cfg-hci-val').textContent = horaSlotStr(C.hora_cierre); } }
   if (map['ejecutivos_apertura_min']) { C.apertura_min = +map['ejecutivos_apertura_min']; document.getElementById('cfg-ap').value = C.apertura_min; document.getElementById('cfg-ap-val').textContent = C.apertura_min; }
   if (map['ejecutivos_cierre_min']) { C.cierre_min = +map['ejecutivos_cierre_min']; document.getElementById('cfg-ci').value = C.cierre_min; document.getElementById('cfg-ci-val').textContent = C.cierre_min; }
-  if (map['ejecutivos_sabado_min']) { C.sabado_min = +map['ejecutivos_sabado_min']; document.getElementById('cfg-sab').value = C.sabado_min; document.getElementById('cfg-sab-val').textContent = C.sabado_min; }
+  if (map['hora_apertura_sat']) { C.hora_apertura_sat = +map['hora_apertura_sat']; const el = document.getElementById('cfg-hsat-ap'); if (el) { el.value = C.hora_apertura_sat; document.getElementById('cfg-hsat-ap-val').textContent = horaSlotStr(C.hora_apertura_sat); } }
+  if (map['hora_cierre_sat']) { C.hora_cierre_sat = +map['hora_cierre_sat']; const el = document.getElementById('cfg-hsat-ci'); if (el) { el.value = C.hora_cierre_sat; document.getElementById('cfg-hsat-ci-val').textContent = horaSlotStr(C.hora_cierre_sat); } }
+  if (map['ejecutivos_apertura_min_sat']) { C.apertura_min_sat = +map['ejecutivos_apertura_min_sat']; const el = document.getElementById('cfg-sat-ap'); if (el) { el.value = C.apertura_min_sat; document.getElementById('cfg-sat-ap-val').textContent = C.apertura_min_sat; } }
+  if (map['ejecutivos_cierre_min_sat']) { C.cierre_min_sat = +map['ejecutivos_cierre_min_sat']; const el = document.getElementById('cfg-sat-ci'); if (el) { el.value = C.cierre_min_sat; document.getElementById('cfg-sat-ci-val').textContent = C.cierre_min_sat; } }
 }
 
 // ── RENDER EJECUTIVOS CONTENT ─────────────────────────────────────────────
@@ -560,10 +593,10 @@ function renderEjecutivosContent() {
     <div class="cfg-card-title">Configuración activa</div>
     <div class="cfg-row"><span class="cfg-key">Turno mín / máx</span><span class="cfg-val">${C.turno_min}h – ${C.turno_max}h</span></div>
     <div class="cfg-row"><span class="cfg-key">Horas mín por ejecutivo</span><span class="cfg-val">${C.horas_min_ejec}h / sem</span></div>
-    <div class="cfg-row"><span class="cfg-key">Ejecutivos apertura</span><span class="cfg-val">≥ ${C.apertura_min}</span></div>
-    <div class="cfg-row"><span class="cfg-key">Ejecutivos cierre</span><span class="cfg-val">≥ ${C.cierre_min}</span></div>
-    <div class="cfg-row"><span class="cfg-key">Ejecutivos sábado</span><span class="cfg-val">≥ ${C.sabado_min}</span></div>
-
+    <div class="cfg-row"><span class="cfg-key">Horario Lun-Vie</span><span class="cfg-val">${horaSlotStr(C.hora_apertura)} – ${horaSlotStr(C.hora_cierre)}</span></div>
+    <div class="cfg-row"><span class="cfg-key">Dotación apertura / cierre</span><span class="cfg-val">≥ ${C.apertura_min} · ≥ ${C.cierre_min}</span></div>
+    <div class="cfg-row"><span class="cfg-key">Horario Sábado</span><span class="cfg-val">${horaSlotStr(C.hora_apertura_sat)} – ${horaSlotStr(C.hora_cierre_sat)}</span></div>
+    <div class="cfg-row"><span class="cfg-key">Dotación sáb apertura / cierre</span><span class="cfg-val">≥ ${C.apertura_min_sat} · ≥ ${C.cierre_min_sat}</span></div>
   </div>`;
 
   content.innerHTML = kpiHTML + tableHTML + cfgHTML;
@@ -799,9 +832,13 @@ function buildSolverPayload() {
       turno_max_horas: C.turno_max,
       apertura_min: C.apertura_min,
       cierre_min: C.cierre_min,
-      sabado_min: C.sabado_min,
+      apertura_min_sat: C.apertura_min_sat,
+      cierre_min_sat: C.cierre_min_sat,
       hora_apertura: C.hora_apertura,
       hora_cierre: C.hora_cierre,
+      hora_apertura_sat: C.hora_apertura_sat,
+      hora_cierre_sat: C.hora_cierre_sat,
+      horas_min_ejecutivo: C.horas_min_ejec,
     }
   };
 }

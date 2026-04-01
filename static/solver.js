@@ -281,6 +281,9 @@ function drawBlocks(sem) {
       const h = d.dur * SH;
       const col = ejColorMap[ej.nombre];
 
+      // Clamp col offset: mínimo 1 slot desde el inicio, máximo dur-2 (deja espacio al footer)
+      const colPos = Math.min(Math.max(d.col ?? Math.floor(d.dur / 2), 1), d.dur - 2);
+
       const block = document.createElement('div');
       block.className = 'tb-block';
       block.dataset.ej = ej.nombre;
@@ -297,11 +300,11 @@ function drawBlocks(sem) {
           background:rgba(255,255,255,.65);border-bottom:1px solid rgba(0,0,0,.06);
           white-space:nowrap">${slot2str(d.ent)}</div>
         ${tieneColacion(d.dur) ? `<div class="tb-col" data-ej="${ej.nombre}" data-dia="${dia}"
-          style="position:absolute;top:${d.col * SH}px;
+          style="position:absolute;top:${colPos * SH}px;
           left:0;right:0;height:${SH}px;cursor:ns-resize;z-index:6;
-          background:repeating-linear-gradient(45deg,rgba(0,0,0,.05) 0px,rgba(0,0,0,.05) 2px,rgba(255,255,255,.6) 2px,rgba(255,255,255,.6) 6px);
-          border-top:1px dashed rgba(100,116,139,.45);border-bottom:1px dashed rgba(100,116,139,.45);
-          font-size:7px;text-align:center;line-height:${SH}px;color:#475569;letter-spacing:.3px;font-weight:600">☕</div>` : ''}
+          background:repeating-linear-gradient(45deg,rgba(255,255,255,.45) 0px,rgba(255,255,255,.45) 3px,rgba(0,0,0,.08) 3px,rgba(0,0,0,.08) 6px);
+          border-top:1px dashed rgba(100,116,139,.5);border-bottom:1px dashed rgba(100,116,139,.5);
+          font-size:7px;text-align:center;line-height:${SH}px;color:#374151;letter-spacing:.3px;font-weight:700">☕</div>` : ''}
         <div class="tb-bot" style="position:absolute;bottom:8px;left:0;right:0;
           font-size:9px;font-weight:700;padding:2px 4px;text-align:right;
           background:rgba(255,255,255,.65)">${slot2str(d.ent + d.dur)}</div>
