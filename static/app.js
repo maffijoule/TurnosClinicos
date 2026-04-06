@@ -8,12 +8,35 @@ const S = {
   raw: null,
   horas: [],
   dows: [],
-  params: { tiempo: 10, prod: 0.80, usab: 0.50 },
+  params: { tiempo: 10, prod: 0.80, usab: 0.50, tiempo_examen: 12, espera_max: 30 },
+  modoEspera: false,
   resultado: null,
   demandaAvg: null,
 };
 
 function recalcIfReady() { if (S.raw) calcular(); }
+
+function toggleModoEspera() {
+  S.modoEspera = !S.modoEspera;
+  const tog = document.getElementById('toggle-espera');
+  const dot = document.getElementById('toggle-espera-dot');
+  const std = document.getElementById('params-standard');
+  const esp = document.getElementById('params-espera');
+  if (S.modoEspera) {
+    tog.style.background = 'var(--accent)';
+    dot.style.left = '18px';
+    std.style.opacity = '0.35';
+    std.style.pointerEvents = 'none';
+    esp.style.display = 'block';
+  } else {
+    tog.style.background = 'var(--border2)';
+    dot.style.left = '2px';
+    std.style.opacity = '1';
+    std.style.pointerEvents = 'auto';
+    esp.style.display = 'none';
+  }
+  recalcIfReady();
+}
 
 // ── DRAG & DROP ────────────────────────────────────────────────────────────
 // Prevent browser from navigating to dropped files — preventDefault only, NO stopPropagation
@@ -169,17 +192,27 @@ function parseDemanda(raw) {
 // personal = D_avg × (1−U) × T / (60 × P)
 function calcular() {
   if (!S.raw) return;
-  const { tiempo, prod, usab } = S.params;
+  const { tiempo, prod, usab, tiempo_examen, espera_max } = S.params;
   const demandaAvg = {}, resultado = {};
 
   for (const h of S.horas) {
     demandaAvg[h] = {}; resultado[h] = {};
     for (const d of S.dows) {
       const vals = S.raw[h][d] || [];
-      // divide by total number of occurrences (including zeros for missing days)
       const avg = vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : 0;
       demandaAvg[h][d] = avg;
-      resultado[h][d] = avg * (1 - usab) * tiempo / (60 * prod);
+
+      if (S.modoEspera) {
+        // Modo espera: cuántos TMs necesito para que nadie espere más de espera_max
+        // Pacientes que llegan en una ventana de espera_max minutos
+        const pacientes_ventana = avg * espera_max / 60;
+        // Capacidad de 1 TM en esa ventana
+        const cap_por_tm = Math.floor(espera_max / tiempo_examen) + 1;
+        resultado[h][d] = cap_por_tm > 0 ? pacientes_ventana / cap_por_tm : 0;
+      } else {
+        // Modo estándar: D_avg × (1−U) × T / (60 × P)
+        resultado[h][d] = avg * (1 - usab) * tiempo / (60 * prod);
+      }
     }
   }
 
@@ -257,21 +290,24 @@ function renderResultado() {
     <div class="table-card-header">
       <div>
         <div class="table-card-title">Resumen por Día de Semana</div>
-        <div class="table-card-sub">T = ${params.tiempo} min &nbsp;·&nbsp; P = ${(params.prod * 100).toFixed(0)}% &nbsp;·&nbsp; U = ${(params.usab * 100).toFixed(0)}%</div>
+        <div class="table-card-sub">${S.modoEspera
+      ? `Examen = ${params.tiempo_examen} min · Espera máx = ${params.espera_max} min`
+      : `T = ${params.tiempo} min · P = ${(params.prod * 100).toFixed(0)}% · U = ${(params.usab * 100).toFixed(0)}%`
+    }</div>
       </div>
     </div>
     <div class="dow-grid">
       ${dows.map((d, i) => {
-    const s = dowStats[i];
-    const bar = (s.max / globalMax * 100).toFixed(1);
-    return `<div class="dow-card">
+      const s = dowStats[i];
+      const bar = (s.max / globalMax * 100).toFixed(1);
+      return `<div class="dow-card">
           <div class="dow-name">${labels[i]}</div>
           <div class="dow-stat"><span class="dow-stat-label">Demanda máxima</span><span class="dow-stat-val">${fmt(s.max)}</span></div>
           <div class="dow-stat"><span class="dow-stat-label">Promedio activo</span><span class="dow-stat-val">${fmt(s.avg)}</span></div>
           <div class="dow-stat"><span class="dow-stat-label">Personas / semana</span><span class="dow-stat-val" style="font-size:12px">${s.dem.toLocaleString('es-CL')}</span></div>
           <div class="dow-bar-wrap"><div class="dow-bar" style="width:${bar}%"></div></div>
         </div>`;
-  }).join('')}
+    }).join('')}
     </div>
   </div>`;
 
@@ -369,8 +405,16 @@ function exportarExcel() {
   XLSX.utils.book_append_sheet(wb, ws2, 'DemandaPromedio');
 
   // Parámetros
-  const ws3 = XLSX.utils.aoa_to_sheet([
+  const ws3 = XLSX.utils.aoa_to_sheet(S.modoEspera ? [
     ['Parámetro', 'Valor'],
+    ['Modo', 'Tiempo de espera'],
+    ['Tiempo de examen (min)', params.tiempo_examen],
+    ['Espera máxima (min)', params.espera_max],
+    [],
+    ['Fórmula', 'TMs = (D_avg × Esp_max / 60) / (⌊Esp_max / T_exam⌋ + 1)'],
+  ] : [
+    ['Parámetro', 'Valor'],
+    ['Modo', 'Estándar'],
     ['Tiempo de atención (min)', params.tiempo],
     ['Productividad', params.prod],
     ['Usabilidad tótem (%)', (params.usab * 100).toFixed(0)],
