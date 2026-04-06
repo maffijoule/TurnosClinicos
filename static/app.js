@@ -776,7 +776,7 @@ function descargarTemplateEjecutivos() {
 
 
 // ── SOLVER INTEGRATION ────────────────────────────────────────────────────
-const SOLVER_URL = 'http://localhost:5050';
+const SOLVER_URL = 'http://127.0.0.1:5050';
 
 async function ejecutarSolver() {
   const btn = document.getElementById('btnSolver');

@@ -308,7 +308,7 @@ async function ejecutarHospSolver() {
   const st = document.getElementById('hosp-solver-status');
   btn.disabled = true; st.innerHTML = '⏳ Conectando...';
   try {
-    const ping = await fetch('http://localhost:5050/hosp/ping', { signal: AbortSignal.timeout(3000) });
+    const ping = await fetch('http://127.0.0.1:5050/hosp/ping', { signal: AbortSignal.timeout(3000) });
     if (!ping.ok) throw new Error('no responde');
   } catch {
     st.innerHTML = '❌ Solver no disponible. Ejecuta <b>run.bat</b>.';
@@ -317,7 +317,7 @@ async function ejecutarHospSolver() {
   st.innerHTML = '⏳ Optimizando turnos...';
   const t0 = Date.now();
   try {
-    const res = await fetch('http://localhost:5050/hosp/solve', {
+    const res = await fetch('http://127.0.0.1:5050/hosp/solve', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ personal: HOSP.personal, demanda: HOSP.demanda, configuracion: HOSP.cfg }),
       signal: AbortSignal.timeout(180000),

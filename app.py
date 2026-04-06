@@ -533,6 +533,6 @@ def models_delete(model_id):
 if __name__ == '__main__':
     print("="*50)
     print("  CEM Capacity Planner v4.1-fix")
-    print("  http://localhost:5050")
+    print("  http://127.0.0.1:5050")
     print("="*50)
     app.run(port=5050, debug=False)
