@@ -393,7 +393,7 @@ function calcHorasTipo() {
   return out;
 }
 
-// ── SLIDER HELPERS (nativos) ──────────────────────────────────────────────────
+// ── TIME-PICKER HELPERS ──────────────────────────────────────────────────────
 function _turnoSliderCSS() {
   if (document.getElementById('ts-css')) return;
   const s = document.createElement('style'); s.id = 'ts-css';
@@ -405,18 +405,19 @@ function _turnoSliderCSS() {
 .ts-timeline{position:relative;height:28px;background:rgba(0,0,0,.06);border-radius:4px;overflow:hidden}
 .ts-tl-seg{position:absolute;top:0;height:100%;display:flex;align-items:center;
   justify-content:center;font-size:10px;font-weight:700;opacity:.85;transition:left .05s,width .05s}
-/* Override global input[type=range] styles for turno sliders */
-.ts-card input[type=range]{
-  -webkit-appearance:auto !important;appearance:auto !important;
-  height:20px !important;cursor:pointer !important;
-  background:transparent !important;
+/* Time picker spinners */
+.ts-time-group{display:flex;align-items:center;gap:2px}
+.ts-spin{
+  width:36px;padding:4px 2px;text-align:center;
+  border:1px solid rgba(0,0,0,.15);border-radius:5px;
+  font-family:var(--mono);font-size:13px;font-weight:700;
+  background:rgba(255,255,255,.6);color:inherit;
+  -moz-appearance:textfield;outline:none;
 }
-.ts-card input[type=range]::-webkit-slider-thumb{
-  -webkit-appearance:auto !important;
-}
-.ts-card input[type=range]::-webkit-slider-runnable-track{
-  height:auto !important;
-}
+.ts-spin:focus{border-color:rgba(0,0,0,.35);background:rgba(255,255,255,.85)}
+.ts-spin::-webkit-inner-spin-button,
+.ts-spin::-webkit-outer-spin-button{opacity:1;cursor:pointer}
+.ts-sep{font-weight:700;font-size:14px;opacity:.5;margin:0 1px}
 `;
   document.head.appendChild(s);
 }
@@ -430,7 +431,6 @@ function _buildTimeline(turnos, AP, CI) {
     return `<div class="ts-tl-seg" id="ts-tl-${t}" style="left:${left}%;width:${w}%;background:${c.bg};
       border:1px solid ${c.border};color:${c.text}">${t}</div>`;
   }).join('');
-  // Tick marks cada 2 horas
   const ticks = [];
   for (let s = AP; s <= CI; s += 4) {
     const pct = ((s - AP) / range * 100).toFixed(2);
@@ -444,6 +444,18 @@ function _buildTimeline(turnos, AP, CI) {
     <div style="position:relative;height:14px">${ticks.join('')}</div>
   </div>`;
 }
+function _timePickerHTML(id, slot, color) {
+  const h = Math.floor(slot / 2), m = (slot % 2) * 30;
+  return `<div class="ts-time-group">
+    <input type="number" id="${id}-h" class="ts-spin" style="color:${color}"
+      min="0" max="24" step="1" value="${h}"
+      onchange="hospTimePick('${id}')">
+    <span class="ts-sep" style="color:${color}">:</span>
+    <input type="number" id="${id}-m" class="ts-spin" style="color:${color}"
+      min="0" max="30" step="30" value="${String(m).padStart(2, '0')}"
+      onchange="hospTimePick('${id}')">
+  </div>`;
+}
 function _turnoCardHTML(t, to, AP, CI, c) {
   const durH = Math.max(0, ((to.fin_slot - to.ini_slot) - 1) * 0.5).toFixed(1);
   return `<div class="ts-card" style="background:${c.bg};border:1px solid ${c.border}">
@@ -451,67 +463,64 @@ function _turnoCardHTML(t, to, AP, CI, c) {
       <span class="ts-title" style="color:${c.text}">Turno ${t}</span>
       <span class="ts-lbl" id="ts-lbl-${t}" style="color:${c.text}">${to.ini_str}–${to.fin_str} · ${durH}h</span>
     </div>
-    <div style="display:flex;align-items:center;gap:6px;margin-top:8px">
+    <div style="display:flex;align-items:center;gap:8px;margin-top:8px">
       <span style="font-size:10px;font-weight:600;width:32px;color:${c.text}">Inicio</span>
-      <input type="range" id="ts-ini-${t}"
-        min="${AP}" max="${CI - 1}" step="1" value="${to.ini_slot}"
-        data-initval="${to.ini_slot}"
-        oninput="hospSliderTurno('${t}')"
-        style="flex:1;height:20px;cursor:pointer;accent-color:${c.track};-webkit-appearance:auto;appearance:auto">
-      <span style="font-family:var(--mono);font-size:10px;min-width:38px;text-align:right;color:${c.text}"
-        id="ts-ini-v-${t}">${to.ini_str}</span>
+      ${_timePickerHTML('ts-ini-' + t, to.ini_slot, c.text)}
     </div>
-    <div style="display:flex;align-items:center;gap:6px;margin-top:4px">
+    <div style="display:flex;align-items:center;gap:8px;margin-top:6px">
       <span style="font-size:10px;font-weight:600;width:32px;color:${c.text}">Fin</span>
-      <input type="range" id="ts-fin-${t}"
-        min="${AP + 1}" max="${CI}" step="1" value="${to.fin_slot}"
-        data-initval="${to.fin_slot}"
-        oninput="hospSliderTurno('${t}')"
-        style="flex:1;height:20px;cursor:pointer;accent-color:${c.track};-webkit-appearance:auto;appearance:auto">
-      <span style="font-family:var(--mono);font-size:10px;min-width:38px;text-align:right;color:${c.text}"
-        id="ts-fin-v-${t}">${to.fin_str}</span>
+      ${_timePickerHTML('ts-fin-' + t, to.fin_slot, c.text)}
     </div>
   </div>`;
 }
-// Llamar DESPUÉS de insertar innerHTML para forzar los valores
-function _initTurnoSliders() {
-  ['M', 'I', 'T'].forEach(t => {
-    const iniEl = document.getElementById(`ts-ini-${t}`);
-    const finEl = document.getElementById(`ts-fin-${t}`);
-    if (iniEl && iniEl.dataset.initval) {
-      iniEl.value = iniEl.dataset.initval;
-      console.log(`[SLIDER] ${t} ini: min=${iniEl.min} max=${iniEl.max} val=${iniEl.value} (target=${iniEl.dataset.initval})`);
-    }
-    if (finEl && finEl.dataset.initval) {
-      finEl.value = finEl.dataset.initval;
-      console.log(`[SLIDER] ${t} fin: min=${finEl.min} max=${finEl.max} val=${finEl.value} (target=${finEl.dataset.initval})`);
-    }
-  });
+function _initTurnoSliders() { /* no-op, pickers set values inline */ }
+
+function _slotFromPicker(prefix) {
+  const hEl = document.getElementById(prefix + '-h');
+  const mEl = document.getElementById(prefix + '-m');
+  if (!hEl || !mEl) return 0;
+  let h = parseInt(hEl.value) || 0;
+  let m = parseInt(mEl.value) || 0;
+  // Clamp minutes to 0 or 30
+  m = m >= 30 ? 30 : 0;
+  mEl.value = String(m).padStart(2, '0');
+  // Clamp hours
+  if (h < 0) h = 0; if (h > 24) h = 24;
+  if (h === 24) { m = 0; mEl.value = '00'; }
+  hEl.value = h;
+  return h * 2 + m / 30;
 }
-function hospSliderTurno(t) {
-  const iniEl = document.getElementById(`ts-ini-${t}`);
-  const finEl = document.getElementById(`ts-fin-${t}`);
-  if (!iniEl || !finEl) return;
-  let ini = +iniEl.value, fin = +finEl.value;
-  // Asegurar ini < fin (mínimo 1 slot)
-  if (ini >= fin) { fin = ini + 1; finEl.value = fin; }
-  // Actualizar labels
+
+function hospTimePick(id) {
+  // id is like "ts-ini-M" or "ts-fin-T"
+  const parts = id.split('-');       // ['ts','ini','M'] or ['ts','fin','T']
+  const t = parts[2];                // turno letter
+  const iniSlot = _slotFromPicker('ts-ini-' + t);
+  const finSlot = _slotFromPicker('ts-fin-' + t);
+  let ini = iniSlot, fin = finSlot;
+  // Ensure ini < fin
+  if (ini >= fin) {
+    fin = ini + 1;
+    const fh = Math.floor(fin / 2), fm = (fin % 2) * 30;
+    const fhEl = document.getElementById(`ts-fin-${t}-h`);
+    const fmEl = document.getElementById(`ts-fin-${t}-m`);
+    if (fhEl) fhEl.value = fh;
+    if (fmEl) fmEl.value = String(fm).padStart(2, '0');
+  }
+  // Update label
   const iniStr = timeFromSlot(ini), finStr = timeFromSlot(fin);
   const durH = Math.max(0, ((fin - ini) - 1) * 0.5).toFixed(1);
-  document.getElementById(`ts-ini-v-${t}`).textContent = iniStr;
-  document.getElementById(`ts-fin-v-${t}`).textContent = finStr;
   const lbl = document.getElementById(`ts-lbl-${t}`);
   if (lbl) lbl.textContent = `${iniStr}–${finStr} · ${durH}h`;
-  // Guardar override
+  // Save override
   if (!HOSP.turnoOverrides[t]) {
     const base = HOSP.resultado.turnos_opt[t];
     HOSP.turnoOverrides[t] = { ini_slot: base.ini_slot, fin_slot: base.fin_slot };
   }
   HOSP.turnoOverrides[t].ini_slot = ini;
   HOSP.turnoOverrides[t].fin_slot = fin;
-  // Actualizar timeline visual
+  // Update timeline + coverage + hours
   _updateTimelineSeg(t);
-  // Recalcular cobertura + horas
   _actualizarCobertura();
 }
 function _updateTimelineSeg(t) {
