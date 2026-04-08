@@ -523,6 +523,26 @@ def models_get(model_id):
         return jsonify({'error': 'not found'}), 404
     return jsonify(model)
 
+@app.route('/models/update/<model_id>', methods=['PUT'])
+def models_update(model_id):
+    """Sobrescribe los turnos/solver_result de un modelo existente (mantiene id y nombre)."""
+    data   = request.get_json()
+    models = load_models()
+    idx    = next((i for i,m in enumerate(models) if m['id'] == model_id), None)
+    if idx is None:
+        return jsonify({'error': 'not found'}), 404
+    models[idx].update({
+        'descripcion':       data.get('descripcion', models[idx].get('descripcion', '')),
+        'fecha':             time.strftime('%Y-%m-%d %H:%M'),
+        'deficit_cobertura': data.get('solver_result', {}).get('deficit_cobertura',
+                                      models[idx].get('deficit_cobertura')),
+        'params':            data.get('params',        models[idx].get('params', {})),
+        'solver_result':     data.get('solver_result', models[idx].get('solver_result', {})),
+        'ejecutivos':        data.get('ejecutivos',    models[idx].get('ejecutivos', [])),
+    })
+    save_models_to_disk(models)
+    return jsonify({'status': 'ok', 'id': model_id})
+
 @app.route('/models/delete/<model_id>', methods=['DELETE'])
 def models_delete(model_id):
     models = load_models()

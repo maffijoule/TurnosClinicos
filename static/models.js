@@ -1,30 +1,78 @@
 // ── CEM Capacity Planner — models.js ─────────────────────────────────────────
 // Guardar, listar y visualizar modelos guardados del solver
+// v2: vista de modelo usa grilla interactiva idéntica al solver activo,
+//     con detección de cambios y opción sobrescribir / guardar como nuevo
 // ─────────────────────────────────────────────────────────────────────────────
 
 const MESES_M = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+  'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 
-// ── GUARDAR MODELO ────────────────────────────────────────────────────────────
+// Estado del modelo que está siendo visto/editado en la pestaña Modelos
+const MV = {
+  modeloId: null,          // id del modelo cargado
+  modeloNombre: null,
+  modeloDesc: null,
+  snapshotTurnos: null,    // JSON.stringify de turnos al momento de cargar
+  ejecutivos: [],          // ejecutivos del modelo (puede diferir del E global)
+  solverResult: null,      // solver_result guardado
+};
+
+// ── HELPERS ───────────────────────────────────────────────────────────────────
+function _turnosHash() {
+  // Serializa ED.turnos de forma estable para detectar cambios
+  return JSON.stringify(ED.turnos);
+}
+
+function _modeloHaCambiado() {
+  return MV.snapshotTurnos !== null && _turnosHash() !== MV.snapshotTurnos;
+}
+
+// ── GUARDAR MODELO (nuevo) ────────────────────────────────────────────────────
 function mostrarModalGuardar() {
-    if (!S.solverResult) return;
+  if (!S.solverResult) return;
+  _abrirModalGuardarConModo('nuevo', null);
+}
 
-    const overlay = document.createElement('div');
-    overlay.id = 'modal-overlay';
-    overlay.style.cssText = `position:fixed;inset:0;background:rgba(0,0,0,.45);
+// ── MODAL UNIFICADO ───────────────────────────────────────────────────────────
+// modo: 'nuevo' | 'sobrescribir' | 'nuevo_desde_modelo'
+// id: id del modelo a sobrescribir (solo en 'sobrescribir')
+function _abrirModalGuardarConModo(modo, id) {
+  cerrarModal();
+
+  const esNuevo = modo !== 'sobrescribir';
+  const titulo = modo === 'sobrescribir' ? '♻️ Sobrescribir modelo'
+    : modo === 'nuevo_desde_modelo' ? '💾 Guardar como nuevo modelo'
+      : '💾 Guardar modelo';
+
+  const nombreDefault = modo === 'sobrescribir' ? MV.modeloNombre
+    : modo === 'nuevo_desde_modelo' ? (MV.modeloNombre + ' (copia)') : '';
+  const descDefault = modo === 'sobrescribir' ? MV.modeloDesc : '';
+
+  const overlay = document.createElement('div');
+  overlay.id = 'modal-overlay';
+  overlay.style.cssText = `position:fixed;inset:0;background:rgba(0,0,0,.45);
     z-index:1000;display:flex;align-items:center;justify-content:center`;
 
-    overlay.innerHTML = `
+  overlay.innerHTML = `
     <div style="background:var(--surface);border-radius:10px;padding:28px;
       width:420px;max-width:90vw;box-shadow:0 8px 32px rgba(0,0,0,.2)">
-      <div style="font-size:16px;font-weight:700;margin-bottom:16px">💾 Guardar modelo</div>
+      <div style="font-size:16px;font-weight:700;margin-bottom:16px">${titulo}</div>
+
+      ${modo === 'sobrescribir' ? `
+      <div style="background:var(--accent-lt);border:1px solid var(--accent);
+        border-radius:7px;padding:10px 14px;margin-bottom:16px;font-size:12px;
+        color:var(--accent2)">
+        ⚠️ Se reemplazarán los turnos guardados con los cambios actuales.
+      </div>` : ''}
 
       <div style="margin-bottom:12px">
         <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px">Nombre *</div>
-        <input id="m-nombre" type="text" placeholder="ej: Escenario base Junio 2025"
+        <input id="m-nombre" type="text" value="${nombreDefault}"
+          placeholder="ej: Escenario base Junio 2025"
           style="width:100%;padding:8px 10px;border:1px solid var(--border);
             border-radius:6px;font-family:var(--sans);font-size:13px;
             background:var(--bg);color:var(--text);outline:none"
+          ${modo === 'sobrescribir' ? 'disabled' : ''}
           oninput="this.style.borderColor='var(--accent)'">
       </div>
 
@@ -34,7 +82,7 @@ function mostrarModalGuardar() {
           style="width:100%;padding:8px 10px;border:1px solid var(--border);
             border-radius:6px;font-family:var(--sans);font-size:12px;
             background:var(--bg);color:var(--text);outline:none;resize:vertical"
-          oninput="this.style.borderColor='var(--accent)'"></textarea>
+          oninput="this.style.borderColor='var(--accent)'">${descDefault}</textarea>
       </div>
 
       <div style="display:flex;gap:8px;justify-content:flex-end">
@@ -43,100 +91,236 @@ function mostrarModalGuardar() {
             background:var(--surface2);cursor:pointer;font-family:var(--sans);font-size:13px">
           Cancelar
         </button>
-        <button onclick="confirmarGuardar()"
+        <button onclick="_confirmarGuardarConModo('${modo}','${id || ''}')"
           style="padding:8px 18px;border:none;border-radius:6px;
-            background:var(--accent);color:#fff;cursor:pointer;
-            font-family:var(--sans);font-size:13px;font-weight:600">
-          Guardar
+            background:${modo === 'sobrescribir' ? 'var(--warn)' : 'var(--accent)'};
+            color:#fff;cursor:pointer;font-family:var(--sans);font-size:13px;font-weight:600">
+          ${modo === 'sobrescribir' ? 'Sobrescribir' : 'Guardar'}
         </button>
       </div>
     </div>`;
 
-    document.body.appendChild(overlay);
-    overlay.addEventListener('click', e => { if (e.target === overlay) cerrarModal(); });
-    setTimeout(() => document.getElementById('m-nombre').focus(), 50);
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click', e => { if (e.target === overlay) cerrarModal(); });
+  setTimeout(() => {
+    const inp = document.getElementById('m-nombre');
+    if (inp && !inp.disabled) inp.focus();
+  }, 50);
 }
 
 function cerrarModal() {
-    const el = document.getElementById('modal-overlay');
-    if (el) el.remove();
+  const el = document.getElementById('modal-overlay');
+  if (el) el.remove();
 }
 
-async function confirmarGuardar() {
-    const nombre = document.getElementById('m-nombre').value.trim();
-    const desc = document.getElementById('m-desc').value.trim();
-    if (!nombre) {
-        document.getElementById('m-nombre').style.borderColor = '#c0392b';
-        return;
-    }
+async function _confirmarGuardarConModo(modo, id) {
+  const nombreEl = document.getElementById('m-nombre');
+  const nombre = nombreEl.disabled
+    ? MV.modeloNombre
+    : nombreEl.value.trim();
+  const desc = document.getElementById('m-desc').value.trim();
 
-    const payload = {
-        nombre,
-        descripcion: desc,
-        solver_result: S.solverResult,
-        ejecutivos: E.ejecutivos,
-        params: {
-            mes: C.mes,
-            anio: C.anio,
-            n_ejecutivos: E.ejecutivos.length,
-            tiempo: S.params.tiempo,
-            prod: S.params.prod,
-            usab: S.params.usab,
-            puestos_max: C.puestos_max,
-            turno_min: C.turno_min,
-            turno_max: C.turno_max,
-            apertura_min: C.apertura_min,
-            cierre_min: C.cierre_min,
-            sabado_min: C.sabado_min,
+  if (!nombre) {
+    if (nombreEl) nombreEl.style.borderColor = '#c0392b';
+    return;
+  }
+
+  // Construir solver_result con los turnos editados actuales
+  const esEnVistaModelo = MV.modeloId !== null;
+  let srToSave, ejecutivosToSave;
+
+  if (esEnVistaModelo) {
+    // Venimos de ver un modelo — usar el solverResult del modelo + turnos de ED
+    srToSave = JSON.parse(JSON.stringify(MV.solverResult));
+    srToSave.turnos = buildTurnosFromED();
+    srToSave.deficit_cobertura = parseFloat(calcDeficit().toFixed(2));
+    ejecutivosToSave = MV.ejecutivos;
+  } else {
+    // Venimos del solver activo
+    if (S.solverResult) {
+      S.solverResult.turnos = buildTurnosFromED();
+      S.solverResult.deficit_cobertura = parseFloat(calcDeficit().toFixed(2));
+    }
+    srToSave = S.solverResult;
+    ejecutivosToSave = E.ejecutivos;
+  }
+
+  const payload = {
+    nombre,
+    descripcion: desc,
+    solver_result: srToSave,
+    ejecutivos: ejecutivosToSave,
+    params: _buildParams(ejecutivosToSave),
+  };
+
+  try {
+    let url = '/models/save';
+    let method = 'POST';
+    if (modo === 'sobrescribir' && id) {
+      url = `/models/update/${id}`;
+      method = 'PUT';
+    }
+    const res = await fetch(url, {
+      method,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    cerrarModal();
+
+    if (modo === 'sobrescribir') {
+      // Actualizar snapshot para que el botón vuelva a estado "sin cambios"
+      MV.snapshotTurnos = _turnosHash();
+      MV.modeloNombre = nombre;
+      MV.modeloDesc = desc;
+      _actualizarBannerCambios();
+      showToast('Modelo sobrescrito ✓', 'ok');
+    } else {
+      showToast('Modelo guardado ✓', 'ok');
+      if (esEnVistaModelo) {
+        // Si guardó como nuevo desde un modelo, actualizar id del modelo activo
+        if (data.id) {
+          MV.modeloId = data.id;
+          MV.snapshotTurnos = _turnosHash();
+          _actualizarBannerCambios();
         }
-    };
-
-    try {
-        const res = await fetch('/models/save', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        });
-        const data = await res.json();
-        cerrarModal();
-        showToast('Modelo guardado ✓', 'ok');
-    } catch (e) {
-        showToast('Error al guardar: ' + e.message, 'err');
+      }
     }
+  } catch (e) {
+    showToast('Error al guardar: ' + e.message, 'err');
+  }
+}
+
+function _buildParams(ejecutivos) {
+  return {
+    mes: C.mes,
+    anio: C.anio,
+    n_ejecutivos: (ejecutivos || []).length,
+    tiempo: S.params.tiempo,
+    prod: S.params.prod,
+    usab: S.params.usab,
+    puestos_max: C.puestos_max,
+    turno_min: C.turno_min,
+    turno_max: C.turno_max,
+    apertura_min: C.apertura_min,
+    cierre_min: C.cierre_min,
+    sabado_min: C.sabado_min,
+  };
+}
+
+// Función pública que sigue llamando solver.js
+async function confirmarGuardar() {
+  await _confirmarGuardarConModo('nuevo', null);
+}
+
+// ── GUARDAR DESDE GRILLA DE MODELO (detecta cambios) ─────────────────────────
+function mostrarModalGuardarDesdeModelo() {
+  const haCambiado = _modeloHaCambiado();
+
+  if (!haCambiado) {
+    // Sin cambios → ofrecer solo "guardar como nuevo"
+    _abrirModalGuardarConModo('nuevo_desde_modelo', null);
+    return;
+  }
+
+  // Hay cambios → modal de elección
+  cerrarModal();
+  const overlay = document.createElement('div');
+  overlay.id = 'modal-overlay';
+  overlay.style.cssText = `position:fixed;inset:0;background:rgba(0,0,0,.45);
+    z-index:1000;display:flex;align-items:center;justify-content:center`;
+
+  overlay.innerHTML = `
+    <div style="background:var(--surface);border-radius:10px;padding:28px;
+      width:400px;max-width:90vw;box-shadow:0 8px 32px rgba(0,0,0,.2)">
+      <div style="font-size:16px;font-weight:700;margin-bottom:8px">💾 Guardar cambios</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:20px;line-height:1.5">
+        Has modificado los turnos de <b>${MV.modeloNombre}</b>.<br>
+        ¿Qué deseas hacer?
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <button onclick="cerrarModal();_abrirModalGuardarConModo('sobrescribir','${MV.modeloId}')"
+          style="padding:12px 16px;border:1.5px solid var(--warn);border-radius:7px;
+            background:transparent;color:var(--warn);font-family:var(--sans);
+            font-size:13px;font-weight:600;cursor:pointer;text-align:left;
+            transition:background .15s"
+          onmouseenter="this.style.background='#fff8e6'"
+          onmouseleave="this.style.background='transparent'">
+          ♻️ Sobrescribir este modelo
+          <div style="font-size:11px;font-weight:400;color:var(--muted);margin-top:2px">
+            Reemplaza los turnos guardados con los cambios actuales
+          </div>
+        </button>
+        <button onclick="cerrarModal();_abrirModalGuardarConModo('nuevo_desde_modelo',null)"
+          style="padding:12px 16px;border:1.5px solid var(--accent);border-radius:7px;
+            background:transparent;color:var(--accent);font-family:var(--sans);
+            font-size:13px;font-weight:600;cursor:pointer;text-align:left;
+            transition:background .15s"
+          onmouseenter="this.style.background='var(--accent-lt)'"
+          onmouseleave="this.style.background='transparent'">
+          ✨ Guardar como nuevo modelo
+          <div style="font-size:11px;font-weight:400;color:var(--muted);margin-top:2px">
+            El modelo original se mantiene intacto
+          </div>
+        </button>
+        <button onclick="cerrarModal()"
+          style="padding:8px;border:1px solid var(--border);border-radius:7px;
+            background:var(--surface2);font-family:var(--sans);font-size:12px;cursor:pointer">
+          Cancelar
+        </button>
+      </div>
+    </div>`;
+
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click', e => { if (e.target === overlay) cerrarModal(); });
+}
+
+// ── BANNER DE CAMBIOS (se inyecta en el header de la grilla) ──────────────────
+function _actualizarBannerCambios() {
+  const banner = document.getElementById('mv-cambios-banner');
+  if (!banner) return;
+  const cambio = _modeloHaCambiado();
+  banner.style.display = cambio ? 'flex' : 'none';
 }
 
 // ── LISTAR MODELOS ────────────────────────────────────────────────────────────
 async function renderModelosContent() {
-    const content = document.getElementById('content');
-    content.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;
+  // Limpiar estado de modelo en vista
+  MV.modeloId = null;
+  MV.snapshotTurnos = null;
+  MV.ejecutivos = [];
+  MV.solverResult = null;
+
+  const content = document.getElementById('content');
+  content.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;
     padding:60px;color:var(--muted)">Cargando modelos...</div>`;
 
-    let models = [];
-    try {
-        const res = await fetch('/models/list');
-        models = await res.json();
-    } catch (e) {
-        content.innerHTML = `<div class="empty">
+  let models = [];
+  try {
+    const res = await fetch('/models/list');
+    models = await res.json();
+  } catch (e) {
+    content.innerHTML = `<div class="empty">
       <div class="empty-icon">⚠️</div>
       <div class="empty-title">Error al cargar modelos</div>
       <div class="empty-sub">Asegúrate de que el servidor está corriendo.</div>
     </div>`;
-        return;
-    }
+    return;
+  }
 
-    if (!models.length) {
-        content.innerHTML = `<div class="empty">
+  if (!models.length) {
+    content.innerHTML = `<div class="empty">
       <div class="empty-icon">🗂️</div>
       <div class="empty-title">Sin modelos guardados</div>
       <div class="empty-sub">Ejecuta el solver y guarda el resultado con el botón "Guardar modelo".</div>
     </div>`;
-        return;
-    }
+    return;
+  }
 
-    const cards = models.map(m => {
-        const mesLabel = m.mes ? (MESES_M[m.mes] || m.mes) : '—';
-        const defColor = m.deficit == 0 ? 'var(--success)' : 'var(--warn)';
-        return `<div class="model-card" onclick="verModelo('${m.id}')"
+  const cards = models.map(m => {
+    const mesLabel = m.mes ? (MESES_M[m.mes] || m.mes) : '—';
+    const defColor = m.deficit == 0 ? 'var(--success)' : 'var(--warn)';
+    return `<div class="model-card" onclick="verModelo('${m.id}')"
       style="background:var(--surface);border:1px solid var(--border);
         border-radius:10px;padding:18px 20px;cursor:pointer;
         transition:box-shadow .15s,border-color .15s;box-shadow:var(--shadow)"
@@ -175,9 +359,9 @@ async function renderModelosContent() {
         </div>
       </div>
     </div>`;
-    }).join('');
+  }).join('');
 
-    content.innerHTML = `
+  content.innerHTML = `
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
       <div>
         <div style="font-size:18px;font-weight:700">Modelos guardados</div>
@@ -187,41 +371,64 @@ async function renderModelosContent() {
     <div style="display:flex;flex-direction:column;gap:12px">${cards}</div>`;
 }
 
-// ── VER MODELO ────────────────────────────────────────────────────────────────
+// ── VER MODELO — ahora usa la grilla interactiva del solver ───────────────────
 async function verModelo(id) {
-    const content = document.getElementById('content');
-    content.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;
+  const content = document.getElementById('content');
+  content.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;
     padding:60px;color:var(--muted)">Cargando modelo...</div>`;
 
-    let model;
-    try {
-        const res = await fetch(`/models/get/${id}`);
-        model = await res.json();
-    } catch (e) {
-        content.innerHTML = `<div class="empty"><div class="empty-title">Error al cargar</div></div>`;
-        return;
-    }
+  let model;
+  try {
+    const res = await fetch(`/models/get/${id}`);
+    model = await res.json();
+  } catch (e) {
+    content.innerHTML = `<div class="empty"><div class="empty-title">Error al cargar</div></div>`;
+    return;
+  }
 
-    const p = model.params || {};
-    const mes = p.mes ? (MESES_M[p.mes] || p.mes) : '—';
+  // ── Guardar estado del modelo en MV ───────────────────────────────────────
+  MV.modeloId = id;
+  MV.modeloNombre = model.nombre;
+  MV.modeloDesc = model.descripcion || '';
+  MV.ejecutivos = model.ejecutivos || [];
+  MV.solverResult = model.solver_result || {};
 
-    // Params card
-    const paramsHTML = `<div class="table-card">
+  // ── Restaurar ejecutivos al estado global E para que solver.js los use ────
+  // Guardamos los originales del solver activo para no destruirlos
+  const _ejBackup = E.ejecutivos.slice();
+  E.ejecutivos = MV.ejecutivos;
+
+  // ── Inicializar ED con los datos del modelo ───────────────────────────────
+  const sr = MV.solverResult;
+  initED(sr);
+
+  // Tomar snapshot DESPUÉS de initED (estado "limpio" del modelo)
+  MV.snapshotTurnos = _turnosHash();
+
+  // ── Restaurar E (initED ya copió lo que necesitaba en ED.turnos) ─────────
+  // No restaurar aún — E.ejecutivos lo necesita renderGrid/renderHorasPanel.
+  // Lo restauraremos cuando el usuario salga de la vista de modelo.
+
+  // ── Parámetros del modelo ─────────────────────────────────────────────────
+  const p = model.params || {};
+  const mes = p.mes ? (MESES_M[p.mes] || p.mes) : '—';
+
+  const paramsHTML = `<div class="table-card">
     <div class="table-card-header">
       <div class="table-card-title">Parámetros del modelo</div>
     </div>
     <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0">
       ${[
-            ['Período', `${mes} ${p.anio || ''}`],
-            ['Ejecutivos', p.n_ejecutivos],
-            ['Déficit', model.deficit_cobertura ?? '—'],
-            ['Tiempo atención', `${p.tiempo || '—'} min`],
-            ['Productividad', `${p.prod ? Math.round(p.prod * 100) : '—'}%`],
-            ['Usabilidad tótem', `${p.usab ? Math.round(p.usab * 100) : '—'}%`],
-            ['Puestos máx', p.puestos_max],
-            ['Turno mín/máx', `${p.turno_min || '—'}h – ${p.turno_max || '—'}h`],
-            ['Apertura/Cierre mín', `${p.apertura_min || '—'} / ${p.cierre_min || '—'}`],
-        ].map(([k, v]) => `<div style="padding:10px 16px;border-bottom:1px solid var(--border);
+      ['Período', `${mes} ${p.anio || ''}`],
+      ['Ejecutivos', p.n_ejecutivos],
+      ['Déficit guardado', model.deficit_cobertura ?? '—'],
+      ['Tiempo atención', `${p.tiempo || '—'} min`],
+      ['Productividad', `${p.prod ? Math.round(p.prod * 100) : '—'}%`],
+      ['Usabilidad tótem', `${p.usab ? Math.round(p.usab * 100) : '—'}%`],
+      ['Puestos máx', p.puestos_max],
+      ['Turno mín/máx', `${p.turno_min || '—'}h – ${p.turno_max || '—'}h`],
+      ['Apertura/Cierre mín', `${p.apertura_min || '—'} / ${p.cierre_min || '—'}`],
+    ].map(([k, v]) => `<div style="padding:10px 16px;border-bottom:1px solid var(--border);
           border-right:1px solid var(--border)">
           <div style="font-size:10px;color:var(--muted);font-weight:600;
             text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">${k}</div>
@@ -230,12 +437,12 @@ async function verModelo(id) {
     </div>
   </div>`;
 
-    // Ejecutivos
-    const ejHTML = model.ejecutivos && model.ejecutivos.length ? `<div class="table-card">
+  // ── Dotación ──────────────────────────────────────────────────────────────
+  const ejHTML = MV.ejecutivos.length ? `<div class="table-card">
     <div class="table-card-header"><div class="table-card-title">Dotación</div></div>
     <div class="table-scroll"><table class="ej-table">
       <thead><tr><th>Nombre</th><th>Tipo</th><th>Horas/sem</th></tr></thead>
-      <tbody>${model.ejecutivos.map(ej => `<tr>
+      <tbody>${MV.ejecutivos.map(ej => `<tr>
         <td style="font-weight:600">${ej.nombre}</td>
         <td><span class="ej-badge ${ej.tipo}">${ej.tipo === 'full' ? 'Full' : 'Part'}</span></td>
         <td style="font-family:var(--mono)">${ej.horas_semana}h</td>
@@ -243,252 +450,173 @@ async function verModelo(id) {
     </table></div>
   </div>` : '';
 
-    // Horas resumen
-    const sr = model.solver_result || {};
-    const sems = sr.semanas || [];
-    const horasHTML = model.ejecutivos && sr.horas_ejecutivo ? `<div class="table-card">
-    <div class="table-card-header"><div class="table-card-title">Resumen de Horas</div></div>
-    <div class="table-scroll"><table class="ej-table">
-      <thead><tr>
-        <th>Ejecutivo</th>
-        ${sems.map(s => `<th>Sem ${s.semana}</th>`).join('')}
-        <th>Total</th><th>Máx</th>
-      </tr></thead>
-      <tbody>${model.ejecutivos.map(ej => {
-        const hd = sr.horas_ejecutivo[ej.nombre] || {};
-        const total = hd.total || 0;
-        const maxT = ej.horas_semana * sems.length;
-        const color = total > maxT ? '#c0392b' : total < ej.horas_semana ? 'var(--warn)' : 'var(--success)';
-        return `<tr>
-          <td style="font-weight:600">${ej.nombre}</td>
-          ${sems.map(s => `<td style="font-family:var(--mono)">${hd['semana_' + s.semana] || 0}h</td>`).join('')}
-          <td style="font-family:var(--mono);font-weight:700;color:${color}">${total}h</td>
-          <td style="font-family:var(--mono);color:var(--muted)">${maxT}h</td>
-        </tr>`;
-    }).join('')}</tbody>
-    </table></div>
-  </div>` : '';
+  // ── Scaffold de la grilla interactiva (igual que buildPage en solver.js) ──
+  const grillaHTML = `
+    <div id="kpi-area"></div>
+    <div id="grid-card" class="table-card">
+      <div id="grid-header" class="table-card-header" style="flex-wrap:wrap;gap:8px"></div>
+      <div style="display:flex;overflow:hidden">
+        <div id="grid-scroll" style="overflow:auto;flex:1"></div>
+        <div id="horas-panel" style="width:160px;flex-shrink:0;padding:16px;
+          border-left:1px solid var(--border);overflow-y:auto;max-height:600px"></div>
+      </div>
+    </div>
+    <div id="resumen-area"></div>`;
 
-    // Grilla semana tipo (usa la semana 1)
-    const grillaHTML = renderGrillaModelo(sr, model.ejecutivos || []);
-
-    content.innerHTML = `
+  // ── Layout completo ───────────────────────────────────────────────────────
+  content.innerHTML = `
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:4px">
-      <button onclick="renderModelosContent()"
+      <button onclick="_salirVistaModelo()"
         style="padding:6px 14px;border:1px solid var(--border);border-radius:6px;
           background:var(--surface2);cursor:pointer;font-size:12px;font-family:var(--sans)">
         ← Volver
       </button>
-      <div>
+      <div style="flex:1;min-width:0">
         <div style="font-size:17px;font-weight:700">${model.nombre}</div>
         <div style="font-size:12px;color:var(--muted)">${model.descripcion || ''} · ${model.fecha}</div>
+      </div>
+      <div id="mv-cambios-banner"
+        style="display:none;align-items:center;gap:8px;background:#fff8e6;
+          border:1px solid var(--warn);border-radius:7px;padding:6px 12px;
+          font-size:12px;color:var(--warn);font-weight:600;flex-shrink:0">
+        ✏️ Cambios sin guardar
       </div>
     </div>
     ${paramsHTML}
     ${ejHTML}
-    ${grillaHTML}
-    ${horasHTML}`;
+    ${grillaHTML}`;
+
+  // ── Renderizar grilla interactiva ─────────────────────────────────────────
+  renderKPI();
+  renderGridHeader_MV();   // versión con botón Guardar adaptado
+  renderGrid();
+  renderHorasPanel();
+  renderResumen();
 }
 
-function renderGrillaModelo(sr, ejecutivos) {
-    if (!sr.semanas || !sr.semanas.length || !sr.turnos) return '';
+// ── HEADER DE GRILLA EN VISTA MODELO (reemplaza renderGridHeader) ─────────────
+function renderGridHeader_MV() {
+  const hdr = document.getElementById('grid-header');
+  if (!hdr) { renderGridHeader(); return; }
 
-    const DIAS_ORDEN = ['lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
-    const diasP = DIAS_ORDEN.filter(d =>
-        sr.semanas.some(sem => sem.dias.some(([, dw]) => dw === d))
-    );
+  const btns = ED.semanas.map((sem, i) => `
+    <button onclick="goSem_MV(${i})" style="
+      padding:5px 12px;border-radius:5px;border:1px solid var(--border);
+      background:${i === ED.semIdx ? 'var(--accent)' : 'var(--surface2)'};
+      color:${i === ED.semIdx ? '#fff' : 'var(--text2)'};
+      font-family:var(--sans);font-size:12px;font-weight:600;cursor:pointer">
+      Sem ${i + 1}
+    </button>`).join('');
 
-    const EJ_COLORS = ['#dbeafe', '#dcfce7', '#fef9c3', '#fce7f3',
-        '#ede9fe', '#ffedd5', '#cffafe', '#fef3c7'];
-    const ejColor = {};
-    ejecutivos.forEach((ej, i) => ejColor[ej.nombre] = EJ_COLORS[i % EJ_COLORS.length]);
-
-    const turnosLibres = sr.turnos.filter(t => !t.libre);
-    const allSlots = new Set();
-    turnosLibres.forEach(t => {
-        const e = timeToMinutes(t.entrada) / 30;
-        const s = timeToMinutes(t.salida) / 30;
-        for (let i = e; i < s; i++) allSlots.add(i);
-    });
-    const slots = [...allSlots].sort((a, b) => a - b);
-
-    // Build nav state for this model view
-    let semIdxM = 0;
-
-    function buildGrillaM(semIdx) {
-        const sem = sr.semanas[semIdx];
-        const turnS = sr.turnos.filter(t => t.semana === sem.semana);
-
-        const navBtns = sr.semanas.map((s, i) =>
-            `<button onclick="verModeloSem('${sr.semanas[0]?.semana}',${i},this)"
-        data-semidx="${i}"
-        style="padding:4px 10px;border-radius:5px;border:1px solid var(--border);
-          background:${i === semIdx ? 'var(--accent)' : 'var(--surface2)'};
-          color:${i === semIdx ? '#fff' : 'var(--text2)'};
-          font-family:var(--sans);font-size:12px;font-weight:600;cursor:pointer">
-        Sem ${s.semana}
-      </button>`).join('');
-
-        const thDias = diasP.map(dia =>
-            `<th colspan="${ejecutivos.length}"
-        style="text-align:center;padding:5px 4px;background:var(--surface2);
-          border-bottom:1px solid var(--border);border-left:2px solid var(--border2);
-          font-size:11px;font-weight:700;text-transform:capitalize">
-        ${dia.charAt(0).toUpperCase() + dia.slice(1, 3)}
-      </th>`).join('');
-
-        const thEjecs = diasP.map(() =>
-            ejecutivos.map(ej =>
-                `<th style="padding:4px;background:${ejColor[ej.nombre]}55;
-          border-bottom:2px solid var(--border2);font-size:10px;
-          min-width:48px;text-align:center;white-space:nowrap;font-weight:600">
-          ${ej.nombre.split(' ')[0].slice(0, 8)}
-        </th>`).join('')
-        ).join('');
-
-        const rows = slots.map(s => {
-            const cells = diasP.map(dia =>
-                ejecutivos.map(ej => {
-                    const t = turnS.find(t2 =>
-                        t2.ejecutivo === ej.nombre && t2.dia === dia && !t2.libre &&
-                        timeToMinutes(t2.entrada) / 30 <= s && timeToMinutes(t2.salida) / 30 > s
-                    );
-                    if (!t) return `<td style="border-bottom:1px solid #f0f2f5;background:#fafafa;
-            border-left:1px solid #f5f5f5"></td>`;
-                    return `<td style="background:${ejColor[ej.nombre]};border-bottom:1px solid #e8eef8;
-            border-left:1px solid #e0e8f4;padding:2px 3px"></td>`;
-                }).join('')
-            ).join('');
-            return `<tr>
-        <td style="font-family:var(--mono);font-size:10px;color:var(--muted);
-          padding:3px 8px;white-space:nowrap;border-right:1px solid var(--border);
-          background:var(--surface);position:sticky;left:0;z-index:1">${slot_to_str_js(s)}</td>
-        ${cells}
-      </tr>`;
-        }).join('');
-
-        return `<div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px">${navBtns}</div>
-      <div style="overflow-x:auto;overflow-y:auto;max-height:480px">
-        <table style="border-collapse:collapse;font-size:11px;white-space:nowrap">
-          <thead style="position:sticky;top:0;z-index:3">
-            <tr>
-              <th style="padding:6px 8px;background:var(--surface2);border-bottom:1px solid var(--border);
-                text-align:left;position:sticky;left:0;z-index:4;min-width:52px">Slot</th>
-              ${thDias}
-            </tr>
-            <tr>
-              <th style="background:var(--surface2);position:sticky;left:0;z-index:4;
-                border-bottom:2px solid var(--border2)"></th>
-              ${thEjecs}
-            </tr>
-          </thead>
-          <tbody>${rows}</tbody>
-        </table>
-      </div>`;
-    }
-
-    // Store for nav
-    window._modeloGrillaData = { sr, ejecutivos, diasP, ejColor, slots };
-
-    return `<div class="table-card" id="modelo-grilla-card">
-    <div class="table-card-header">
-      <div class="table-card-title">Horario semanal</div>
+  hdr.innerHTML = `
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;flex:1">
+      <div style="display:flex;gap:4px;flex-wrap:wrap">${btns}</div>
+      <span style="font-size:11px;color:var(--muted)">
+        ${(ED.semanas[ED.semIdx] || { dias: [] }).dias.map(([f,]) => f).join(' · ')}
+      </span>
     </div>
-    <div style="padding:12px 16px 0" id="modelo-grilla-nav-wrap">
-      ${buildGrillaM(0)}
-    </div>
-  </div>`;
+    <div style="display:flex;gap:8px;align-items:center">
+      <button onclick="mostrarModalGuardarDesdeModelo()" class="btn-export"
+        style="width:auto;padding:5px 14px">💾 Guardar</button>
+      <button onclick="exportarExcelTurnosModelo()" class="btn-export"
+        style="width:auto;padding:5px 14px">↓ Exportar</button>
+    </div>`;
 }
 
-function verModeloSem(_, semIdx, btn) {
-    const { sr, ejecutivos, diasP, ejColor, slots } = window._modeloGrillaData || {};
-    if (!sr) return;
-
-    // Update button styles
-    btn.closest('div').querySelectorAll('button').forEach((b, i) => {
-        b.style.background = i === semIdx ? 'var(--accent)' : 'var(--surface2)';
-        b.style.color = i === semIdx ? '#fff' : 'var(--text2)';
-    });
-
-    const wrap = document.getElementById('modelo-grilla-nav-wrap');
-    const EJ_COLORS = ['#dbeafe', '#dcfce7', '#fef9c3', '#fce7f3',
-        '#ede9fe', '#ffedd5', '#cffafe', '#fef3c7'];
-
-    const sem = sr.semanas[semIdx];
-    const turnS = sr.turnos.filter(t => t.semana === sem.semana);
-    const DIAS_ORDEN = ['lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
-
-    const thDias = diasP.map(dia =>
-        `<th colspan="${ejecutivos.length}"
-      style="text-align:center;padding:5px 4px;background:var(--surface2);
-        border-bottom:1px solid var(--border);border-left:2px solid var(--border2);
-        font-size:11px;font-weight:700;text-transform:capitalize">
-      ${dia.charAt(0).toUpperCase() + dia.slice(1, 3)}
-    </th>`).join('');
-
-    const thEjecs = diasP.map(() =>
-        ejecutivos.map(ej =>
-            `<th style="padding:4px;background:${ejColor[ej.nombre]}55;
-        border-bottom:2px solid var(--border2);font-size:10px;
-        min-width:48px;text-align:center;white-space:nowrap;font-weight:600">
-        ${ej.nombre.split(' ')[0].slice(0, 8)}
-      </th>`).join('')
-    ).join('');
-
-    const rows = slots.map(s => {
-        const cells = diasP.map(dia =>
-            ejecutivos.map(ej => {
-                const t = turnS.find(t2 =>
-                    t2.ejecutivo === ej.nombre && t2.dia === dia && !t2.libre &&
-                    timeToMinutes(t2.entrada) / 30 <= s && timeToMinutes(t2.salida) / 30 > s
-                );
-                if (!t) return `<td style="border-bottom:1px solid #f0f2f5;background:#fafafa;
-          border-left:1px solid #f5f5f5"></td>`;
-                return `<td style="background:${ejColor[ej.nombre]};border-bottom:1px solid #e8eef8;
-          border-left:1px solid #e0e8f4;padding:2px 3px"></td>`;
-            }).join('')
-        ).join('');
-        return `<tr>
-      <td style="font-family:var(--mono);font-size:10px;color:var(--muted);
-        padding:3px 8px;white-space:nowrap;border-right:1px solid var(--border);
-        background:var(--surface);position:sticky;left:0;z-index:1">${slot_to_str_js(s)}</td>
-      ${cells}
-    </tr>`;
-    }).join('');
-
-    // Replace only the table part, keep nav buttons
-    const navDiv = wrap.querySelector('div');
-    const tableDiv = wrap.querySelector('div + div') || wrap.lastElementChild;
-    if (tableDiv) tableDiv.remove();
-
-    const newTable = document.createElement('div');
-    newTable.style.cssText = 'overflow-x:auto;overflow-y:auto;max-height:480px';
-    newTable.innerHTML = `
-    <table style="border-collapse:collapse;font-size:11px;white-space:nowrap">
-      <thead style="position:sticky;top:0;z-index:3">
-        <tr>
-          <th style="padding:6px 8px;background:var(--surface2);border-bottom:1px solid var(--border);
-            text-align:left;position:sticky;left:0;z-index:4;min-width:52px">Slot</th>
-          ${thDias}
-        </tr>
-        <tr>
-          <th style="background:var(--surface2);position:sticky;left:0;z-index:4;
-            border-bottom:2px solid var(--border2)"></th>
-          ${thEjecs}
-        </tr>
-      </thead>
-      <tbody>${rows}</tbody>
-    </table>`;
-    wrap.appendChild(newTable);
+// goSem equivalente para vista modelo (re-renderiza header con la versión MV)
+function goSem_MV(idx) {
+  ED.semIdx = idx;
+  renderKPI();
+  renderGridHeader_MV();
+  renderGrid();
+  renderHorasPanel();
+  renderResumen();
 }
 
+// ── HOOK: detectar cambios tras editar bloques ────────────────────────────────
+// Se llama después de cualquier refreshAll() en solver.js cuando estamos
+// en vista de modelo. Lo conseguimos sobreescribiendo refreshAll temporalmente
+// al entrar y restaurándolo al salir.
+const _refreshAll_orig = typeof refreshAll === 'function' ? refreshAll : null;
+
+function _hookRefreshAll() {
+  // Envuelve refreshAll para disparar actualización del banner
+  window._mv_hooked = true;
+  const orig = refreshAll;
+  window.refreshAll = function () {
+    orig();
+    _actualizarBannerCambios();
+  };
+  // También enganchamos goSem para actualizar header correcto
+  const origGoSem = goSem;
+  window._goSem_orig = origGoSem;
+  window.goSem = goSem_MV;
+  // Y renderGridHeader para usar versión MV
+  window._renderGridHeader_orig = renderGridHeader;
+  window.renderGridHeader = renderGridHeader_MV;
+}
+
+function _unhookRefreshAll() {
+  if (window._mv_hooked) {
+    window._mv_hooked = false;
+    // No podemos recuperar el original fácilmente aquí; como la función
+    // es idempotente excepto por el banner, dejamos el wrapper (inofensivo
+    // fuera de vista modelo ya que _actualizarBannerCambios es no-op
+    // cuando MV.snapshotTurnos === null).
+  }
+  if (window._goSem_orig) { window.goSem = window._goSem_orig; delete window._goSem_orig; }
+  if (window._renderGridHeader_orig) { window.renderGridHeader = window._renderGridHeader_orig; delete window._renderGridHeader_orig; }
+}
+
+// ── SALIR DE VISTA MODELO ────────────────────────────────────────────────────
+function _salirVistaModelo() {
+  // Advertir si hay cambios sin guardar
+  if (_modeloHaCambiado()) {
+    if (!confirm('Tienes cambios sin guardar. ¿Salir sin guardar?')) return;
+  }
+  _unhookRefreshAll();
+  MV.modeloId = null;
+  MV.snapshotTurnos = null;
+  MV.ejecutivos = [];
+  MV.solverResult = null;
+  renderModelosContent();
+}
+
+// Sobrescribir verModelo para enganchar hooks al terminar de renderizar
+const _verModelo_orig = verModelo;
+// (verModelo ya está definido arriba con la lógica nueva; el hook se aplica via setTimeout)
+
+// Parche: después de montar la vista modelo, activar hooks
+const _verModeloPatch = verModelo;
+window.verModelo = async function (id) {
+  _unhookRefreshAll(); // limpiar cualquier hook previo
+  await _verModeloPatch(id);
+  _hookRefreshAll();
+  _actualizarBannerCambios();
+};
+
+// ── EXPORTAR DESDE VISTA MODELO ───────────────────────────────────────────────
+function exportarExcelTurnosModelo() {
+  exportarExcelTurnos(); // reutiliza la función de solver.js
+}
+
+// ── GUARDAR MODELO EDITADO (llamado desde solver activo, sin cambios) ─────────
+function mostrarModalGuardarEditado() {
+  if (S.solverResult) {
+    S.solverResult.turnos = buildTurnosFromED();
+    S.solverResult.deficit_cobertura = parseFloat(calcDeficit().toFixed(2));
+  }
+  mostrarModalGuardar();
+}
+
+// ── ELIMINAR MODELO ───────────────────────────────────────────────────────────
 async function eliminarModelo(id, btn) {
-    if (!confirm('¿Eliminar este modelo?')) return;
-    try {
-        await fetch(`/models/delete/${id}`, { method: 'DELETE' });
-        showToast('Modelo eliminado', 'ok');
-        renderModelosContent();
-    } catch (e) {
-        showToast('Error al eliminar', 'err');
-    }
+  if (!confirm('¿Eliminar este modelo?')) return;
+  try {
+    await fetch(`/models/delete/${id}`, { method: 'DELETE' });
+    showToast('Modelo eliminado', 'ok');
+    renderModelosContent();
+  } catch (e) {
+    showToast('Error al eliminar', 'err');
+  }
 }
