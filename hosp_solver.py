@@ -140,16 +140,31 @@ def resolver_hosp(data):
             if vars_dia:
                 prob += pulp.lpSum(vars_dia) <= 1, f"MaxTurno_{si(n)}_{si(dow)}"
 
-    # ── C2: turno fijo toda la semana ────────────────────────────────────────
-    # Si persona trabaja turno t cualquier día → TW[n,t]=1
-    # Solo puede haber 1 categoría activa por semana
+    # ── C2: enlace X→TW (para C4) ────────────────────────────────────────────
+    # TW[n,t]=1 si persona trabaja turno t algún día (no fija el turno toda la semana)
     for p in personal:
         n = p['nombre']
-        prob += pulp.lpSum(TW[n,t] for t in T_OPTS) <= 1, f"UnCat_{si(n)}"
         for t in T_OPTS:
             for dow in DIAS_X_TURNO[t]:
                 if (n,t,dow) in X:
                     prob += X[n,t,dow] <= TW[n,t], f"Cat_{si(n)}_{t}_{si(dow)}"
+
+    # ── C2b: descanso mínimo 8h entre días consecutivos ───────────────────────
+    # Si fin(t1) + 16 slots > ini(t2) + 48 (cruce medianoche) → no pueden combinarse
+    CONSEC = [('lunes','martes'), ('martes','miércoles'), ('miércoles','jueves'),
+              ('jueves','viernes'), ('viernes','sábado')]
+    for p in personal:
+        n = p['nombre']
+        for d1, d2 in CONSEC:
+            for t1 in T_OPTS:
+                for t2 in T_OPTS:
+                    if (n,t1,d1) not in X or (n,t2,d2) not in X:
+                        continue
+                    # slots de descanso = tiempo desde fin(t1) hasta ini(t2) cruzando medianoche
+                    rest = TURNOS[t2]['ini'] + 48 - TURNOS[t1]['fin']
+                    if rest < 16:   # menos de 8 horas
+                        prob += X[n,t1,d1] + X[n,t2,d2] <= 1, \
+                            f"Rest8h_{si(n)}_{t1}_{si(d1)}_{t2}_{si(d2)}"
 
     # ── C3: máx 42h semanales ────────────────────────────────────────────────
     # Horas = sum_días X[n,t,d] * h_turno(t)  — lineal porque h_turno es constante
@@ -286,3 +301,62 @@ def hosp_solve():
 @hosp_bp.route('/hosp/ping')
 def hosp_ping():
     return jsonify({'status':'ok','modulo':'hospitalizado','version':'4.0'})
+
+@hosp_bp.route('/hosp/template')
+def hosp_template():
+    """Genera y descarga un template Excel para cargar datos de pabellon."""
+    import io
+    try:
+        import openpyxl
+        from flask import send_file
+        wb = openpyxl.Workbook()
+
+        # ── Hoja Personal ──────────────────────────────────────────────────────
+        ws_p = wb.active; ws_p.title = 'Personal'
+        ws_p.append(['Nombre', 'Rol', 'Horas_semana'])
+        roles_validos = 'aux_aseo | enfermera_eu | arsenalera | pabellonera | aux_anestesia'
+        for row in [
+            ('M. DAZA',      'aux_aseo',      42),
+            ('F. MONTOYA',   'aux_aseo',      42),
+            ('D. CHAVARRIA', 'enfermera_eu',  42),
+            ('D. MONSALVE',  'enfermera_eu',  42),
+        ]:
+            ws_p.append(row)
+        ws_p.append([])
+        ws_p.append([f'Roles válidos: {roles_validos}'])
+        ws_p.column_dimensions['A'].width = 22
+        ws_p.column_dimensions['B'].width = 18
+        ws_p.column_dimensions['C'].width = 14
+
+        # ── Hoja Demanda ───────────────────────────────────────────────────────
+        ws_d = wb.create_sheet('Demanda')
+        ws_d.append(['Inicio', 'Fin', 'Pabellones'])
+        ws_d.append(['07:00', '10:00', 1])
+        ws_d.append(['10:00', '15:00', 2])
+        ws_d.append(['15:00', '18:00', 3])
+        ws_d.append(['18:00', '21:00', 4])
+        ws_d.append(['21:00', '24:00', 2])
+        ws_d.column_dimensions['A'].width = 10
+        ws_d.column_dimensions['B'].width = 10
+        ws_d.column_dimensions['C'].width = 12
+
+        # ── Hoja Configuracion ─────────────────────────────────────────────────
+        ws_c = wb.create_sheet('Configuracion')
+        ws_c.append(['Parametro', 'Valor'])
+        for row in [
+            ('mes',              3),
+            ('anio',          2025),
+            ('horas_max_semana', 42),
+            ('hora_apertura', '07:00'),
+            ('hora_cierre',   '24:00'),
+        ]:
+            ws_c.append(row)
+        ws_c.column_dimensions['A'].width = 20
+        ws_c.column_dimensions['B'].width = 12
+
+        buf = io.BytesIO()
+        wb.save(buf); buf.seek(0)
+        return send_file(buf, mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                         as_attachment=True, download_name='Template_Pabellon.xlsx')
+    except ImportError:
+        return jsonify({'status': 'error', 'mensaje': 'openpyxl no instalado. Ejecuta: pip install openpyxl'}), 500

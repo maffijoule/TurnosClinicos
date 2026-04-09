@@ -492,24 +492,20 @@ function switchModulo(m) {
   });
 
   if (m === 'ambulatorio') {
-    // Mostrar sidebar ambulatorio, ocultar hospitalizado
-    ['demanda', 'ejecutivos', 'config', 'modelos'].forEach(t => {
-      const btn = document.getElementById('st-' + t);
-      if (btn) btn.style.display = '';
+    document.getElementById('amb-subtab-bar').style.display = '';
+    document.getElementById('hosp-subtab-bar').style.display = 'none';
+    ['panel-hosp-config', 'panel-hosp-modelos'].forEach(id => {
+      const el = document.getElementById(id); if (el) el.style.display = 'none';
     });
-    document.getElementById('panel-hospitalizado').style.display = 'none';
     switchSubtab(currentSubtab || 'demanda');
   } else if (m === 'hospitalizado') {
-    // Ocultar subtabs ambulatorio, mostrar panel hospitalizado
+    document.getElementById('amb-subtab-bar').style.display = 'none';
+    document.getElementById('hosp-subtab-bar').style.display = '';
     ['demanda', 'ejecutivos', 'config', 'modelos'].forEach(t => {
-      const btn = document.getElementById('st-' + t);
-      if (btn) btn.style.display = 'none';
       const panel = document.getElementById('panel-' + t);
       if (panel) panel.style.display = 'none';
     });
-    document.getElementById('panel-hospitalizado').style.display = '';
-    renderHospSidebar();
-    renderHospContent();
+    switchHospSubtab(window._hospSubtab || 'config');
   }
 }
 

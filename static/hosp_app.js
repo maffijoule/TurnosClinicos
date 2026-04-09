@@ -114,7 +114,8 @@ function cargarModelo(id) {
   HOSP.resultado = m.resultado ? JSON.parse(JSON.stringify(m.resultado)) : null;
   HOSP.semanaIdx = 0;
   showToast(`Modelo "${m.nombre}" cargado`, 'ok');
-  renderHospSidebar(); renderHospContent();
+  switchHospSubtab('config');
+  renderHospContent();
 }
 function eliminarModelo(id) {
   saveModels(loadModels().filter(x => x.id !== id));
@@ -141,9 +142,65 @@ function renderModelosPanel() {
     </div>`).join('');
 }
 
+// ── SUB-TABS HOSPITALIZADO ────────────────────────────────────────────────────
+function switchHospSubtab(tab) {
+  window._hospSubtab = tab;
+  ['config', 'modelos'].forEach(t => {
+    const btn = document.getElementById('st-hosp-' + t);
+    const panel = document.getElementById('panel-hosp-' + t);
+    if (btn) btn.classList.toggle('active', t === tab);
+    if (panel) panel.style.display = t === tab ? '' : 'none';
+  });
+  if (tab === 'config') {
+    renderHospSidebar();
+    renderHospContent();
+  }
+  if (tab === 'modelos') {
+    renderHospModelosTab();
+    // limpiar el content para no mostrar residuos de ambulatorio
+    const content = document.getElementById('content');
+    if (content && !HOSP.resultado) {
+      content.innerHTML = `<div class="empty">
+        <div class="empty-icon">🏥</div>
+        <div class="empty-title">Módulo Hospitalizado</div>
+        <div class="empty-sub">Carga un modelo o configura y ejecuta el solver para generar la plantilla mensual.</div>
+      </div>`;
+    }
+  }
+}
+
+function renderHospModelosTab() {
+  const el = document.getElementById('panel-hosp-modelos'); if (!el) return;
+  const models = loadModels();
+  const saveHTML = `
+    <div class="sidebar-section">
+      <div class="section-label">Guardar Modelo Actual</div>
+      <input type="text" id="modelo-nombre" placeholder="Nombre del modelo" class="cfg-input" style="margin-bottom:6px">
+      <textarea id="modelo-desc" placeholder="Descripción opcional..." class="cfg-input"
+        style="resize:vertical;min-height:44px;font-family:var(--sans);margin-bottom:6px"></textarea>
+      <button onclick="guardarModelo()" class="btn-primary">💾 Guardar Modelo</button>
+    </div>`;
+  const listaHTML = models.length === 0
+    ? `<div style="font-size:11px;color:var(--muted);padding:8px 12px;text-align:center">No hay modelos guardados</div>`
+    : models.map(m => `
+      <div style="border:1px solid var(--border);border-radius:6px;padding:9px 10px;margin-bottom:8px;background:var(--surface2)">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start">
+          <div style="font-size:12px;font-weight:700;color:var(--text)">${m.nombre}</div>
+          <span style="font-size:9px;color:var(--muted)">${m.fecha}</span>
+        </div>
+        ${m.descripcion ? `<div style="font-size:10px;color:var(--muted);margin-top:2px">${m.descripcion}</div>` : ''}
+        <div style="font-size:10px;color:var(--muted);margin-top:3px">${m.personal.length} personas · ${MESES_HOSP[m.cfg.mes]} ${m.cfg.anio}${m.resultado ? ' · ✓ plantilla' : ''}</div>
+        <div style="display:flex;gap:6px;margin-top:8px">
+          <button onclick="cargarModelo(${m.id})" style="flex:1;padding:5px;border-radius:5px;border:1.5px solid var(--accent);background:transparent;color:var(--accent);font-size:11px;font-weight:600;cursor:pointer">↩ Cargar</button>
+          <button onclick="if(confirm('¿Eliminar?'))eliminarModelo(${m.id})" style="padding:5px 8px;border-radius:5px;border:1.5px solid #e0c8c8;background:transparent;color:#c0392b;font-size:11px;cursor:pointer">✕</button>
+        </div>
+      </div>`).join('');
+  el.innerHTML = saveHTML + `<div class="sidebar-section"><div class="section-label">Modelos Guardados</div><div id="hosp-modelos-lista">${listaHTML}</div></div>`;
+}
+
 // ── SIDEBAR ───────────────────────────────────────────────────────────────────
 function renderHospSidebar() {
-  const panel = document.getElementById('panel-hospitalizado'); if (!panel) return;
+  const panel = document.getElementById('panel-hosp-config'); if (!panel) return;
   const porRol = HOSP.personal.reduce((a, p) => { (a[p.rol] = a[p.rol] || []).push(p); return a; }, {});
 
   panel.innerHTML = `
@@ -226,25 +283,91 @@ function renderHospSidebar() {
     </div>
 
     <div class="sidebar-section">
-      <div class="section-label">Acciones</div>
-      <button class="btn-primary" id="btnHospSolver" onclick="ejecutarHospSolver()">▶ Calcular Plantilla</button>
-      <div id="hosp-solver-status" style="margin-top:10px;font-size:11px;color:var(--muted);line-height:1.5"></div>
+      <div class="section-label">Cargar desde Excel</div>
+      <div class="dropzone" id="hosp-dropzone" onclick="document.getElementById('hosp-file-input').click()"
+        ondragover="event.preventDefault();this.style.borderColor='var(--accent)'"
+        ondragleave="this.style.borderColor=''"
+        ondrop="event.preventDefault();this.style.borderColor='';hospHandleFile(event.dataTransfer.files[0])">
+        <input type="file" id="hosp-file-input" accept=".xlsx,.xls" style="display:none"
+          onchange="hospHandleFile(this.files[0])">
+        <div class="dropzone-icon">📋</div>
+        <div class="dropzone-title" id="hosp-dz-title">Arrastra tu Excel aquí</div>
+        <div class="dropzone-sub">Hojas: <b>Personal · Demanda · Configuracion</b></div>
+      </div>
+      <button onclick="window.open('/hosp/template','_blank')" class="btn-export" style="margin-top:6px">↓ Descargar Template</button>
     </div>
 
     <div class="sidebar-section">
-      <div class="section-label">Guardar Modelo</div>
-      <input type="text" id="modelo-nombre" placeholder="Nombre del modelo" class="cfg-input" style="margin-bottom:6px">
-      <textarea id="modelo-desc" placeholder="Descripción opcional..." class="cfg-input"
-        style="resize:vertical;min-height:44px;font-family:var(--sans);margin-bottom:6px"></textarea>
-      <button onclick="guardarModelo()" class="btn-primary">💾 Guardar Modelo</button>
-      <div style="margin-top:14px">
-        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:8px">Modelos Guardados</div>
-        <div id="hosp-modelos-lista"></div>
-      </div>
+      <div class="section-label">Acciones</div>
+      <button class="btn-primary" id="btnHospSolver" onclick="ejecutarHospSolver()">▶ Calcular Plantilla</button>
+      <div id="hosp-solver-status" style="margin-top:10px;font-size:11px;color:var(--muted);line-height:1.5"></div>
     </div>`;
 
   renderHospFranjas();
-  renderModelosPanel();
+}
+
+// ── CARGA EXCEL PABELLÓN ──────────────────────────────────────────────────────
+function hospHandleFile(file) {
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const wb = XLSX.read(e.target.result, { type: 'array' });
+      let loaded = 0;
+
+      // Hoja Personal
+      const wsP = wb.Sheets['Personal'];
+      if (wsP) {
+        const rows = XLSX.utils.sheet_to_json(wsP, { header: 1, defval: '' });
+        const personal = [];
+        for (let i = 1; i < rows.length; i++) {
+          const [nombre, rol, horas] = rows[i];
+          if (!nombre || String(nombre).startsWith('Roles')) continue;
+          personal.push({ nombre: String(nombre).trim(), rol: String(rol).trim(), horas_semana: +horas || 42 });
+        }
+        if (personal.length) { HOSP.personal = personal; loaded++; }
+      }
+
+      // Hoja Demanda
+      const wsD = wb.Sheets['Demanda'];
+      if (wsD) {
+        const rows = XLSX.utils.sheet_to_json(wsD, { header: 1, defval: '' });
+        const demanda = [];
+        for (let i = 1; i < rows.length; i++) {
+          const [inicio, fin, pab] = rows[i];
+          if (!inicio || !fin) continue;
+          demanda.push({ inicio: String(inicio).trim(), fin: String(fin).trim(), pabellones: +pab || 1 });
+        }
+        if (demanda.length) { HOSP.demanda = demanda; loaded++; }
+      }
+
+      // Hoja Configuracion
+      const wsC = wb.Sheets['Configuracion'];
+      if (wsC) {
+        const rows = XLSX.utils.sheet_to_json(wsC, { header: 1, defval: '' });
+        rows.slice(1).forEach(([param, valor]) => {
+          if (!param) return;
+          const k = String(param).trim();
+          if (k === 'mes')              HOSP.cfg.mes              = +valor;
+          if (k === 'anio')             HOSP.cfg.anio             = +valor;
+          if (k === 'horas_max_semana') HOSP.cfg.horas_max_semana = +valor;
+          if (k === 'hora_apertura')    HOSP.cfg.hora_apertura    = String(valor).trim();
+          if (k === 'hora_cierre')      HOSP.cfg.hora_cierre      = String(valor).trim();
+        });
+        loaded++;
+      }
+
+      if (loaded === 0) { showToast('No se encontraron hojas válidas', 'err'); return; }
+      document.getElementById('hosp-dz-title').textContent = file.name;
+      HOSP.resultado = null; HOSP.hospPlan = {}; HOSP.turnoOverrides = {};
+      showToast(`Excel cargado (${HOSP.personal.length} personas, ${HOSP.demanda.length} franjas)`, 'ok');
+      renderHospSidebar();
+      renderHospContent();
+    } catch (err) {
+      showToast('Error al leer Excel: ' + err.message, 'err');
+    }
+  };
+  reader.readAsArrayBuffer(file);
 }
 
 function hospToggleAgregar() {

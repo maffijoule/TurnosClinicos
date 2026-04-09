@@ -28,11 +28,15 @@
   <div class="main">
     <div class="sidebar">
 
-      <div style="display:flex;border-bottom:1px solid var(--border)">
+      <div style="display:flex;border-bottom:1px solid var(--border)" id="amb-subtab-bar">
         <button class="subtab-btn active" id="st-demanda" onclick="switchSubtab('demanda')">Demanda</button>
         <button class="subtab-btn" id="st-ejecutivos" onclick="switchSubtab('ejecutivos')">Ejecutivos</button>
         <button class="subtab-btn" id="st-config" onclick="switchSubtab('config')">Config</button>
         <button class="subtab-btn" id="st-modelos" onclick="switchSubtab('modelos')">Modelos</button>
+      </div>
+      <div style="display:none;border-bottom:1px solid var(--border)" id="hosp-subtab-bar">
+        <button class="subtab-btn active" id="st-hosp-config" onclick="switchHospSubtab('config')">Config</button>
+        <button class="subtab-btn" id="st-hosp-modelos" onclick="switchHospSubtab('modelos')">Modelos</button>
       </div>
 
       <!-- PANEL: DEMANDA -->
@@ -211,8 +215,10 @@
 
       </div>
 
-      <!-- PANEL: HOSPITALIZADO -->
-      <div id="panel-hospitalizado" style="display:none"></div>
+      <!-- PANEL: HOSPITALIZADO CONFIG -->
+      <div id="panel-hosp-config" style="display:none"></div>
+      <!-- PANEL: HOSPITALIZADO MODELOS -->
+      <div id="panel-hosp-modelos" style="display:none"></div>
 
     </div><!-- /sidebar -->
 
@@ -228,10 +234,10 @@
   <div class="toast" id="toast"></div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" crossorigin="anonymous"></script>
-  <script src="/static/app.js"></script>
-  <script src="/static/solver.js"></script>
-  <script src="/static/models.js"></script>
-  <script src="/static/hosp_app.js"></script>
+  <script src="/static/app.js?v=2"></script>
+  <script src="/static/solver.js?v=2"></script>
+  <script src="/static/models.js?v=2"></script>
+  <script src="/static/hosp_app.js?v=2"></script>
 </body>
 
 </html>
