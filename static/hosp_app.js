@@ -93,10 +93,8 @@ function guardarModelo() {
     demanda: JSON.parse(JSON.stringify(HOSP.demanda)),
     cfg: JSON.parse(JSON.stringify(HOSP.cfg)),
     turnoOverrides: JSON.parse(JSON.stringify(HOSP.turnoOverrides)),
-    resultado: HOSP.resultado ? {
-      turnos_opt: HOSP.resultado.turnos_opt,
-      semana_tipo: HOSP.resultado.semana_tipo,
-    } : null,
+    hospPlan: JSON.parse(JSON.stringify(HOSP.hospPlan)),
+    resultado: HOSP.resultado ? JSON.parse(JSON.stringify(HOSP.resultado)) : null,
   };
   const idx = models.findIndex(m => m.nombre === nombre);
   if (idx >= 0) models[idx] = snap; else models.unshift(snap);
@@ -112,7 +110,9 @@ function cargarModelo(id) {
   HOSP.demanda = JSON.parse(JSON.stringify(m.demanda));
   HOSP.cfg = JSON.parse(JSON.stringify(m.cfg));
   HOSP.turnoOverrides = JSON.parse(JSON.stringify(m.turnoOverrides || {}));
-  HOSP.resultado = null; HOSP.hospPlan = {};
+  HOSP.hospPlan = JSON.parse(JSON.stringify(m.hospPlan || {}));
+  HOSP.resultado = m.resultado ? JSON.parse(JSON.stringify(m.resultado)) : null;
+  HOSP.semanaIdx = 0;
   showToast(`Modelo "${m.nombre}" cargado`, 'ok');
   renderHospSidebar(); renderHospContent();
 }
@@ -308,7 +308,7 @@ async function ejecutarHospSolver() {
   const st = document.getElementById('hosp-solver-status');
   btn.disabled = true; st.innerHTML = '⏳ Conectando...';
   try {
-    const ping = await fetch('http://127.0.0.1:5050/hosp/ping', { signal: AbortSignal.timeout(3000) });
+    const ping = await fetch(`${window.location.origin}/hosp/ping`, { signal: AbortSignal.timeout(3000) });
     if (!ping.ok) throw new Error('no responde');
   } catch {
     st.innerHTML = '❌ Solver no disponible. Ejecuta <b>run.bat</b>.';
@@ -317,7 +317,7 @@ async function ejecutarHospSolver() {
   st.innerHTML = '⏳ Optimizando turnos...';
   const t0 = Date.now();
   try {
-    const res = await fetch('http://127.0.0.1:5050/hosp/solve', {
+    const res = await fetch(`${window.location.origin}/hosp/solve`, {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ personal: HOSP.personal, demanda: HOSP.demanda, configuracion: HOSP.cfg }),
       signal: AbortSignal.timeout(180000),
