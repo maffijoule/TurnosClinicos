@@ -22,7 +22,14 @@ const HOSP = {
   ],
   cfg: {
     mes: 3, anio: 2025, horas_max_semana: 42,
-    hora_apertura: '07:00', hora_cierre: '24:00'
+    hora_apertura: '07:00', hora_cierre: '24:00',
+    req_por_pab: {
+      enfermera_eu:   0.5,   // 1 cada 2 pabellones
+      aux_aseo:       0.25,  // 1 cada 4 pabellones (mín 1)
+      arsenalera:     0,
+      pabellonera:    0,
+      aux_anestesia:  0,
+    }
   },
   turnoOverrides: {},
 };
@@ -238,6 +245,21 @@ function renderHospSidebar() {
     </div>
 
     <div class="sidebar-section">
+      <div class="section-label">Requerimiento por Pabellón</div>
+      <div style="font-size:10px;color:var(--muted);margin-bottom:8px;line-height:1.4">
+        Personal requerido por pabellón activo (fracciones = mínimo 1 si hay al menos 1 pabellón)
+      </div>
+      ${ROL_OPTS.map(rol => {
+        const v = HOSP.cfg.req_por_pab?.[rol] ?? 0;
+        return `<div class="param-row" style="align-items:center">
+          <div class="param-label">${ROL_LABEL[rol]} <span class="param-val" id="req-pab-val-${rol}">${v > 0 ? (1/v % 1 === 0 ? '1 c/'+Math.round(1/v)+' pab' : v.toFixed(2)+'/pab') : '—'}</span></div>
+          <input type="range" min="0" max="2" step="0.25" value="${v}"
+            oninput="hospSetReqPab('${rol}',+this.value)">
+        </div>`;
+      }).join('')}
+    </div>
+
+    <div class="sidebar-section">
       <div class="section-label">Demanda de Pabellones</div>
       <div id="hosp-franjas"></div>
       <button onclick="hospAddFranja()" style="margin-top:8px;width:100%;padding:7px;
@@ -394,6 +416,13 @@ function hospEliminarPersonal(nombre) {
   }
   renderHospSidebar(); showToast(`${nombre} eliminado`, 'ok');
 }
+function hospSetReqPab(rol, v) {
+  if (!HOSP.cfg.req_por_pab) HOSP.cfg.req_por_pab = {};
+  HOSP.cfg.req_por_pab[rol] = v;
+  const el = document.getElementById('req-pab-val-' + rol);
+  if (el) el.textContent = v > 0 ? (1/v % 1 === 0 ? '1 c/'+Math.round(1/v)+' pab' : v.toFixed(2)+'/pab') : '—';
+  if (HOSP.resultado) _actualizarCobertura();
+}
 function hospSetApertura(h) {
   HOSP.cfg.hora_apertura = timeFromSlot(Math.round(h * 2));
   document.getElementById('hosp-ap-val').textContent = HOSP.cfg.hora_apertura;
@@ -442,7 +471,7 @@ async function ejecutarHospSolver() {
   try {
     const res = await fetch(`${window.location.origin}/hosp/solve`, {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ personal: HOSP.personal, demanda: HOSP.demanda, configuracion: HOSP.cfg }),
+      body: JSON.stringify({ personal: HOSP.personal, demanda: HOSP.demanda, configuracion: { ...HOSP.cfg, req_por_pab: HOSP.cfg.req_por_pab || {} } }),
       signal: AbortSignal.timeout(180000),
     });
     const data = await res.json();
@@ -462,39 +491,38 @@ async function ejecutarHospSolver() {
 function calcCobertura() {
   const d = HOSP.resultado; if (!d) return {};
   const turnos = getTurnosEfectivos();
+  const rpp = HOSP.cfg.req_por_pab || {};
   const reqSlot = {};
   HOSP.demanda.forEach(f => {
     const ini = slotFromTime(f.inicio);
     const fin = Math.min(f.fin === '24:00' ? 48 : slotFromTime(f.fin), 48);
     for (let s = ini; s < fin; s++) reqSlot[s] = Math.max(reqSlot[s] || 0, f.pabellones);
   });
-  const eu_n = d.personal.filter(p => p.rol === 'enfermera_eu').map(p => p.nombre);
-  const aseo_n = d.personal.filter(p => p.rol === 'aux_aseo').map(p => p.nombre);
+  // agrupar personal por rol
+  const porRol = {};
+  d.personal.forEach(p => { (porRol[p.rol] = porRol[p.rol] || []).push(p.nombre); });
   const DXT = { 'M': DIAS_LAB, 'I': ['lunes', 'martes', 'miércoles', 'jueves', 'viernes'], 'T': ['lunes', 'martes', 'miércoles', 'jueves', 'viernes'] };
   const cob = {};
   Object.entries(reqSlot).sort(([a], [b]) => +a - +b).forEach(([sStr, pab]) => {
     const s = +sStr;
-    const req_eu = Math.max(1, Math.ceil(pab / 2));
-    const euD = [], aseoD = [];
     const diasOp = DIAS_LAB.filter(dow => Object.entries(turnos).some(([t, to]) => to.ini_slot <= s && s < to.fin_slot && DXT[t]?.includes(dow)));
-    diasOp.forEach(dow => {
-      let eu_c = 0, aseo_c = 0;
-      d.personal.forEach(p => {
-        const t = HOSP.hospPlan[p.nombre]?.[dow] || '';
-        if (!t || t === 'DOM') return;
-        const to = turnos[t]; if (!to || !DXT[t]?.includes(dow)) return;
-        if (!(to.ini_slot <= s && s < to.fin_slot)) return;
-        if (eu_n.includes(p.nombre)) eu_c++;
-        if (aseo_n.includes(p.nombre)) aseo_c++;
-      });
-      euD.push(eu_c); aseoD.push(aseo_c);
+    if (!diasOp.length) return;
+    const cobPorRol = {};
+    ROL_OPTS.forEach(rol => {
+      const nombres = porRol[rol] || [];
+      if (!nombres.length) return;
+      const ratio = rpp[rol] ?? 0;
+      if (ratio === 0) return;
+      const req = Math.max(1, Math.ceil(pab * ratio));
+      const counts = diasOp.map(dow => nombres.filter(n => {
+        const t = HOSP.hospPlan[n]?.[dow] || '';
+        if (!t || t === 'DOM') return false;
+        const to = turnos[t]; if (!to || !DXT[t]?.includes(dow)) return false;
+        return to.ini_slot <= s && s < to.fin_slot;
+      }).length);
+      cobPorRol[rol] = { req, cob: Math.min(...counts), deficit: Math.max(0, req - Math.min(...counts)) };
     });
-    if (!euD.length) return;
-    cob[timeFromSlot(s)] = {
-      pabellones: pab, req_eu,
-      cob_eu: Math.min(...euD), deficit_eu: Math.max(0, req_eu - Math.min(...euD)),
-      req_aseo: 1, cob_aseo: Math.min(...aseoD), deficit_aseo: Math.max(0, 1 - Math.min(...aseoD)),
-    };
+    cob[timeFromSlot(s)] = { pabellones: pab, roles: cobPorRol };
   });
   return cob;
 }
@@ -673,7 +701,8 @@ function renderHospContent() {
   const turnos = getTurnosEfectivos();
   const cob = calcCobertura();
   const horasTipo = calcHorasTipo();
-  const defTotal = Object.values(cob).reduce((s, c) => s + c.deficit_eu + c.deficit_aseo, 0);
+  const defTotal = Object.values(cob).reduce((s, c) =>
+    s + Object.values(c.roles || {}).reduce((r, v) => r + v.deficit, 0), 0);
   const AP = slotFromTime(d.hora_apertura);
   const CI = slotFromTime(d.hora_cierre);
 
@@ -840,35 +869,44 @@ function heatCobCls(deficit) {
   return 'cob-w4';
 }
 function cobRow(hora, c) {
-  const okEu = c.deficit_eu === 0, okAs = c.deficit_aseo === 0;
-  const eu_pct = c.req_eu > 0 ? Math.min(100, Math.round(c.cob_eu / c.req_eu * 100)) : 100;
-  const as_pct = c.req_aseo > 0 ? Math.min(100, Math.round(c.cob_aseo / c.req_aseo * 100)) : 100;
+  const roles = Object.keys(c.roles);
   const barColor = ok => ok ? '#1a8a5a' : '#e07040';
+  const rolCells = roles.map((rol, i) => {
+    const r = c.roles[rol];
+    const ok = r.deficit === 0;
+    const pct = r.req > 0 ? Math.min(100, Math.round(r.cob / r.req * 100)) : 100;
+    return `
+    <td class="cob-cell" ${i === 0 ? 'style="border-left:2px solid var(--border)"' : ''}>${r.req}</td>
+    <td class="cob-cell ${heatCobCls(r.deficit)}">
+      ${r.cob}
+      <div class="cob-bar-wrap"><div class="cob-bar" style="width:${pct}%;background:${barColor(ok)}"></div></div>
+    </td>
+    <td class="cob-cell" style="font-size:10px;font-weight:700;color:${ok ? 'var(--success)' : '#c0392b'}">${ok ? '✓' : '−' + r.deficit}</td>`;
+  }).join('');
   return `<tr>
     <td class="cob-hora">${hora}</td>
     <td class="cob-cell" style="color:var(--text2)">${c.pabellones}</td>
-    <td class="cob-cell">${c.req_eu}</td>
-    <td class="cob-cell ${heatCobCls(c.deficit_eu)}">
-      ${c.cob_eu}
-      <div class="cob-bar-wrap"><div class="cob-bar" style="width:${eu_pct}%;background:${barColor(okEu)}"></div></div>
-    </td>
-    <td class="cob-cell" style="font-size:10px;font-weight:700;color:${okEu ? 'var(--success)' : '#c0392b'}">${okEu ? '✓' : '−' + c.deficit_eu}</td>
-    <td class="cob-cell" style="border-left:2px solid var(--border)">${c.req_aseo}</td>
-    <td class="cob-cell ${heatCobCls(c.deficit_aseo)}">
-      ${c.cob_aseo}
-      <div class="cob-bar-wrap"><div class="cob-bar" style="width:${as_pct}%;background:${barColor(okAs)}"></div></div>
-    </td>
-    <td class="cob-cell" style="font-size:10px;font-weight:700;color:${okAs ? 'var(--success)' : '#c0392b'}">${okAs ? '✓' : '−' + c.deficit_aseo}</td>
+    ${rolCells}
   </tr>`;
 }
 function buildCobGrilla(cob) {
   _cobCSS();
   if (!Object.keys(cob).length) return '';
-  const rows = Object.entries(cob).map(([h, c]) => cobRow(h, c)).join('');
-  const thG = (label, cols, extra = '') =>
-    `<th colspan="${cols}" style="padding:5px 8px;font-size:10px;font-weight:700;text-align:center;
+  // detectar roles activos (con ratio > 0)
+  const rolesActivos = ROL_OPTS.filter(rol => (HOSP.cfg.req_por_pab?.[rol] ?? 0) > 0);
+  if (!rolesActivos.length) return '';
+  const thG = (label, first = false) =>
+    `<th colspan="3" style="padding:5px 8px;font-size:10px;font-weight:700;text-align:center;
         background:var(--surface2);border-bottom:1px solid var(--border);
-        border-left:2px solid #e8eaed;color:var(--text2);${extra}">${label}</th>`;
+        border-left:${first ? '2px' : '1px'} solid #e8eaed;color:var(--text2)">${label}</th>`;
+  const subThs = rolesActivos.map((_rol, i) =>
+    ['Req.', 'Asig.', 'Estado'].map((h, j) =>
+      `<th style="padding:4px 8px;font-size:9px;font-weight:600;text-align:center;
+          background:var(--surface2);border-bottom:1px solid var(--border);color:var(--muted);
+          ${i === 0 && j === 0 ? 'border-left:2px solid #e8eaed' : ''}">${h}</th>`
+    ).join('')
+  ).join('');
+  const rows = Object.entries(cob).map(([h, c]) => cobRow(h, c)).join('');
   return `<div class="table-card">
     <div class="table-card-header">
         <div>
@@ -890,15 +928,9 @@ function buildCobGrilla(cob) {
                         position:sticky;left:0;z-index:3;min-width:72px">Franja</th>
                     <th rowspan="2" style="padding:5px 8px;font-size:10px;font-weight:700;text-align:center;
                         background:var(--surface2);border-bottom:1px solid var(--border)">Pab.</th>
-                    ${thG('Enfermera EU', 3)}${thG('Aux. Aseo', 3)}
+                    ${rolesActivos.map((rol, i) => thG(ROL_LABEL[rol] || rol, i === 0)).join('')}
                 </tr>
-                <tr>
-                    ${['Req.', 'Asig.', 'Estado', 'Req.', 'Asig.', 'Estado'].map((h, i) =>
-    `<th style="padding:4px 8px;font-size:9px;font-weight:600;text-align:center;
-                        background:var(--surface2);border-bottom:1px solid var(--border);color:var(--muted);
-                        ${i === 3 ? 'border-left:2px solid #e8eaed' : ''}">${h}</th>`
-  ).join('')}
-                </tr>
+                <tr>${subThs}</tr>
             </thead>
             <tbody id="hosp-cob-body">${rows}</tbody>
         </table>
@@ -910,7 +942,8 @@ function buildCobGrilla(cob) {
 function _actualizarCobertura() {
   const cob = calcCobertura();
   const horasTipo = calcHorasTipo();
-  const defTotal = Object.values(cob).reduce((s, c) => s + c.deficit_eu + c.deficit_aseo, 0);
+  const defTotal = Object.values(cob).reduce((s, c) =>
+    s + Object.values(c.roles || {}).reduce((r, v) => r + v.deficit, 0), 0);
 
   const body = document.getElementById('hosp-cob-body');
   if (body) body.innerHTML = Object.entries(cob).map(([h, c]) => cobRow(h, c)).join('');

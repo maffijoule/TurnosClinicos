@@ -12,6 +12,8 @@ app = Flask(__name__)
 # ── Módulos adicionales ────────────────────────────────────────────────────────
 from hosp_solver import hosp_bp
 app.register_blueprint(hosp_bp)
+from imagen_solver import imagen_bp
+app.register_blueprint(imagen_bp)
 
 # ── HELPERS ───────────────────────────────────────────────────────────────────
 INICIO_OP = 7 * 2   # slot 14 = 07:00
@@ -555,4 +557,4 @@ if __name__ == '__main__':
     print("  CEM Capacity Planner v4.1-fix")
     print("  http://127.0.0.1:5050")
     print("="*50)
-    app.run(port=5050, debug=False)
+    app.run(port=5050, debug=False, threaded=True)

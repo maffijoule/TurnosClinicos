@@ -84,10 +84,24 @@ def resolver_hosp(data):
                      for t in T_OPTS),
           flush=True, file=sys.stderr)
 
+    # ── Requerimientos por pabellón (parámetro de usuario) ───────────────────
+    req_por_pab = cfg.get('req_por_pab', {})
+    # defaults si no se envían
+    if not req_por_pab:
+        req_por_pab = {'enfermera_eu': 0.5, 'aux_aseo': 0.25}
+
     semanas      = build_semanas(mes, anio)
     h_max        = {p['nombre']: float(p.get('horas_semana', h_max_sem)) for p in personal}
-    eu_nombres   = [p['nombre'] for p in personal if p['rol'] == 'enfermera_eu']
-    aseo_nombres = [p['nombre'] for p in personal if p['rol'] == 'aux_aseo']
+
+    # agrupar personal por rol
+    nombres_por_rol = {}
+    for p in personal:
+        nombres_por_rol.setdefault(p['rol'], []).append(p['nombre'])
+
+    # roles con ratio > 0 que tienen personal asignado
+    roles_activos = [rol for rol, ratio in req_por_pab.items()
+                     if float(ratio) > 0 and nombres_por_rol.get(rol)]
+
 
     # ── Demanda → req_slot ────────────────────────────────────────────────────
     req_slot = {}
@@ -121,15 +135,13 @@ def resolver_hosp(data):
     TW = {(n,t): pulp.LpVariable(f"TW_{si(n)}_{t}", cat='Binary')
           for p in personal for n in [p['nombre']] for t in T_OPTS}
 
-    # Slack de cobertura
-    SLK_eu   = {s: pulp.LpVariable(f"SEU_{s}",  lowBound=0) for s in slots_activos}
-    SLK_aseo = {s: pulp.LpVariable(f"SAS_{s}",  lowBound=0) for s in slots_activos}
+    # Slack de cobertura — uno por rol activo por slot
+    SLK = {(rol, s): pulp.LpVariable(f"SLK_{si(rol)}_{s}", lowBound=0)
+           for rol in roles_activos for s in slots_activos}
 
     # ── Objetivo: cobertura primero, personal segundo ─────────────────────────
-    # Peso personal = 0.001 → máx aporte = 0.001 * N_dias << 1 slot de déficit
     PESO = 0.001
-    prob += (pulp.lpSum(SLK_eu.values()) +
-             pulp.lpSum(SLK_aseo.values()) +
+    prob += (pulp.lpSum(SLK.values()) +
              PESO * pulp.lpSum(X.values())), "Obj"
 
     # ── C1: max 1 turno/día/persona ───────────────────────────────────────────
@@ -176,32 +188,27 @@ def resolver_hosp(data):
         if expr:
             prob += pulp.lpSum(expr) <= h_max[n], f"HMax_{si(n)}"
 
-    # ── C4: al menos 1 persona de cada rol en cada turno ─────────────────────
-    # Garantiza cobertura en toda la jornada
-    for rol, nombres_rol in [('enfermera_eu', eu_nombres), ('aux_aseo', aseo_nombres)]:
+    # ── C4: al menos 1 persona de cada rol activo en cada turno ──────────────
+    for rol in roles_activos:
+        nombres_rol = nombres_por_rol.get(rol, [])
         if len(nombres_rol) >= len(T_OPTS):
             for t in T_OPTS:
                 prob += pulp.lpSum(TW[n,t] for n in nombres_rol) >= 1, \
-                    f"MinTurno_{rol}_{t}"
+                    f"MinTurno_{si(rol)}_{t}"
 
-    # ── C5: cobertura EU por slot ─────────────────────────────────────────────
-    for s in slots_activos:
-        req_eu = max(1, -(-req_slot[s]//2))
-        for dow in DIAS_LAB:
-            cob = [X[n,t,dow] for n in eu_nombres for t in T_OPTS
-                   if (n,t,dow) in X and cubre(t,s)]
-            if cob:
-                prob += pulp.lpSum(cob) + SLK_eu[s] >= req_eu, \
-                    f"CovEU_{s}_{si(dow)}"
-
-    # ── C6: cobertura aseo por slot ───────────────────────────────────────────
-    for s in slots_activos:
-        for dow in DIAS_LAB:
-            cob = [X[n,t,dow] for n in aseo_nombres for t in T_OPTS
-                   if (n,t,dow) in X and cubre(t,s)]
-            if cob:
-                prob += pulp.lpSum(cob) + SLK_aseo[s] >= 1, \
-                    f"CovAseo_{s}_{si(dow)}"
+    # ── C5: cobertura por rol y slot ─────────────────────────────────────────
+    for rol in roles_activos:
+        nombres_rol = nombres_por_rol.get(rol, [])
+        ratio = float(req_por_pab[rol])
+        for s in slots_activos:
+            pab = req_slot[s]
+            req = max(1, -(-int(pab * ratio * 100)) // 100)  # ceil(pab*ratio) usando aritmética entera
+            for dow in DIAS_LAB:
+                cob_vars = [X[n,t,dow] for n in nombres_rol for t in T_OPTS
+                            if (n,t,dow) in X and cubre(t,s)]
+                if cob_vars:
+                    prob += pulp.lpSum(cob_vars) + SLK[rol,s] >= req, \
+                        f"Cov_{si(rol)}_{s}_{si(dow)}"
 
     # ── Solve ─────────────────────────────────────────────────────────────────
     print(f"[HOSP] {len(prob.variables())} vars, {len(prob.constraints)} cons",
@@ -232,29 +239,26 @@ def resolver_hosp(data):
                 if (n,t,dow) in X and (v(X[n,t,dow]) or 0) > 0.5)
         horas_tipo[n] = round(h, 1)
 
-    # Cobertura real
+    # Cobertura real por rol
     cobertura = {}
     for s in slots_activos:
-        pab    = req_slot[s]
-        req_eu = max(1, -(-pab//2))
-        eu_d, aseo_d = [], []
-        for dow in DIAS_LAB:
-            eu_c   = sum(1 for n in eu_nombres   for t in T_OPTS
-                         if (n,t,dow) in X and (v(X[n,t,dow]) or 0) > 0.5
-                         and cubre(t,s))
-            aseo_c = sum(1 for n in aseo_nombres for t in T_OPTS
-                         if (n,t,dow) in X and (v(X[n,t,dow]) or 0) > 0.5
-                         and cubre(t,s))
-            eu_d.append(eu_c); aseo_d.append(aseo_c)
-        cobertura[slot_str(s)] = {
-            'pabellones':   pab,
-            'req_eu':       req_eu,
-            'cob_eu':       min(eu_d),
-            'deficit_eu':   max(0, req_eu - min(eu_d)),
-            'req_aseo':     1,
-            'cob_aseo':     min(aseo_d),
-            'deficit_aseo': max(0, 1 - min(aseo_d)),
-        }
+        pab = req_slot[s]
+        roles_cob = {}
+        for rol in roles_activos:
+            nombres_rol = nombres_por_rol.get(rol, [])
+            ratio = float(req_por_pab[rol])
+            req = max(1, -(-int(pab * ratio * 100)) // 100)
+            counts = []
+            for dow in DIAS_LAB:
+                c = sum(1 for n in nombres_rol for t in T_OPTS
+                        if (n,t,dow) in X and (v(X[n,t,dow]) or 0) > 0.5
+                        and cubre(t,s))
+                counts.append(c)
+            roles_cob[rol] = {
+                'req': req, 'cob': min(counts),
+                'deficit': max(0, req - min(counts))
+            }
+        cobertura[slot_str(s)] = {'pabellones': pab, 'roles': roles_cob}
 
     # Plantilla mensual
     plantilla = {p['nombre']: {f: semana_tipo[p['nombre']].get(dow,'')

@@ -22,6 +22,7 @@
       <button class="tab-btn active" data-modulo="ambulatorio"
         onclick="switchModulo('ambulatorio')">Ambulatorio</button>
       <button class="tab-btn" data-modulo="hospitalizado" onclick="switchModulo('hospitalizado')">Hospitalizado</button>
+      <button class="tab-btn" data-modulo="imagen" onclick="switchModulo('imagen')">Imagen</button>
     </div>
   </div>
 
@@ -37,6 +38,12 @@
       <div style="display:none;border-bottom:1px solid var(--border)" id="hosp-subtab-bar">
         <button class="subtab-btn active" id="st-hosp-config" onclick="switchHospSubtab('config')">Config</button>
         <button class="subtab-btn" id="st-hosp-modelos" onclick="switchHospSubtab('modelos')">Modelos</button>
+      </div>
+      <div style="display:none;border-bottom:1px solid var(--border)" id="img-subtab-bar">
+        <button class="subtab-btn active" id="st-img-examenes" onclick="switchImgSubtab('examenes')">Examenes</button>
+        <button class="subtab-btn" id="st-img-tecnologos" onclick="switchImgSubtab('tecnologos')">Tecnólogos</button>
+        <button class="subtab-btn" id="st-img-config" onclick="switchImgSubtab('config')">Config</button>
+        <button class="subtab-btn" id="st-img-modelos" onclick="switchImgSubtab('modelos')">Modelos</button>
       </div>
 
       <!-- PANEL: DEMANDA -->
@@ -220,6 +227,15 @@
       <!-- PANEL: HOSPITALIZADO MODELOS -->
       <div id="panel-hosp-modelos" style="display:none"></div>
 
+      <!-- PANEL: IMAGEN EXAMENES -->
+      <div id="panel-img-examenes" style="display:none"></div>
+      <!-- PANEL: IMAGEN TECNÓLOGOS -->
+      <div id="panel-img-tecnologos" style="display:none"></div>
+      <!-- PANEL: IMAGEN CONFIG -->
+      <div id="panel-img-config" style="display:none"></div>
+      <!-- PANEL: IMAGEN MODELOS -->
+      <div id="panel-img-modelos" style="display:none"></div>
+
     </div><!-- /sidebar -->
 
     <div class="content" id="content">
@@ -238,6 +254,8 @@
   <script src="/static/solver.js?v=2"></script>
   <script src="/static/models.js?v=2"></script>
   <script src="/static/hosp_app.js?v=2"></script>
+  <script src="/static/imagen_app.js?v=2"></script>
+  <script src="/static/imagen_solver.js?v=2"></script>
 </body>
 
 </html>

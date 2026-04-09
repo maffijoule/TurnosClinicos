@@ -491,21 +491,29 @@ function switchModulo(m) {
     if (b.getAttribute('data-modulo') === m) b.classList.add('active');
   });
 
+  const ALL_SUBTAB_BARS = ['amb-subtab-bar', 'hosp-subtab-bar', 'img-subtab-bar'];
+  const ALL_PANELS = [
+    'panel-demanda', 'panel-ejecutivos', 'panel-config', 'panel-modelos',
+    'panel-hosp-config', 'panel-hosp-modelos',
+    'panel-img-examenes', 'panel-img-tecnologos', 'panel-img-config', 'panel-img-modelos'
+  ];
+
+  ALL_SUBTAB_BARS.forEach(id => {
+    const el = document.getElementById(id); if (el) el.style.display = 'none';
+  });
+  ALL_PANELS.forEach(id => {
+    const el = document.getElementById(id); if (el) el.style.display = 'none';
+  });
+
   if (m === 'ambulatorio') {
     document.getElementById('amb-subtab-bar').style.display = '';
-    document.getElementById('hosp-subtab-bar').style.display = 'none';
-    ['panel-hosp-config', 'panel-hosp-modelos'].forEach(id => {
-      const el = document.getElementById(id); if (el) el.style.display = 'none';
-    });
     switchSubtab(currentSubtab || 'demanda');
   } else if (m === 'hospitalizado') {
-    document.getElementById('amb-subtab-bar').style.display = 'none';
     document.getElementById('hosp-subtab-bar').style.display = '';
-    ['demanda', 'ejecutivos', 'config', 'modelos'].forEach(t => {
-      const panel = document.getElementById('panel-' + t);
-      if (panel) panel.style.display = 'none';
-    });
     switchHospSubtab(window._hospSubtab || 'config');
+  } else if (m === 'imagen') {
+    document.getElementById('img-subtab-bar').style.display = '';
+    switchImgSubtab(window._imgSubtab || 'examenes');
   }
 }
 
@@ -772,7 +780,7 @@ function descargarTemplateEjecutivos() {
 
 
 // ── SOLVER INTEGRATION ────────────────────────────────────────────────────
-const SOLVER_URL = 'http://127.0.0.1:5050';
+const SOLVER_URL = '';
 
 async function ejecutarSolver() {
   const btn = document.getElementById('btnSolver');
@@ -783,7 +791,7 @@ async function ejecutarSolver() {
   btn.disabled = true;
 
   try {
-    const ping = await fetch(`${SOLVER_URL}/ping`, { signal: AbortSignal.timeout(3000) });
+    const ping = await fetch(`${SOLVER_URL}/ping`, { signal: AbortSignal.timeout(8000) });
     if (!ping.ok) throw new Error('Servidor no responde');
   } catch (e) {
     status.innerHTML = `❌ Solver no disponible.<br>
