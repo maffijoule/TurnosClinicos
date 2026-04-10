@@ -121,9 +121,9 @@ function renderKPI() {
       <div class="kpi-sub">${def === 0 ? 'Cobertura completa ✓' : 'franjas sin cubrir'}</div>
     </div>
     <div class="kpi-card">
-      <div class="kpi-label">Semanas</div>
-      <div class="kpi-val">${ED.semanas.length}</div>
-      <div class="kpi-sub">${MESES[C.mes] || ''} ${C.anio || ''}</div>
+      <div class="kpi-label">Semana tipo</div>
+      <div class="kpi-val">1</div>
+      <div class="kpi-sub">semana representativa</div>
     </div>
     <div class="kpi-card">
       <div class="kpi-label">Ejecutivos</div>
@@ -141,21 +141,11 @@ function renderKPI() {
 // ── HEADER ────────────────────────────────────────────────────────────────────
 function renderGridHeader() {
   const hdr = document.getElementById('grid-header');
-  const btns = ED.semanas.map((sem, i) => `
-    <button onclick="goSem(${i})" style="
-      padding:5px 12px;border-radius:5px;border:1px solid var(--border);
-      background:${i === ED.semIdx ? 'var(--accent)' : 'var(--surface2)'};
-      color:${i === ED.semIdx ? '#fff' : 'var(--text2)'};
-      font-family:var(--sans);font-size:12px;font-weight:600;cursor:pointer">
-      Sem ${i + 1}
-    </button>`).join('');
 
   hdr.innerHTML = `
     <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;flex:1">
-      <div style="display:flex;gap:4px;flex-wrap:wrap">${btns}</div>
-      <span style="font-size:11px;color:var(--muted)">
-        ${(ED.semanas[ED.semIdx] || { dias: [] }).dias.map(([f,]) => f).join(' · ')}
-      </span>
+      <span style="font-size:11px;font-weight:600;color:var(--text2)">Semana tipo</span>
+      <span style="font-size:11px;color:var(--muted)">Lun · Mar · Mié · Jue · Vie · Sáb</span>
     </div>
     <div style="display:flex;gap:8px;align-items:center">
       <button onclick="mostrarModalGuardarEditado()" class="btn-export"
@@ -174,10 +164,25 @@ function renderGrid() {
   const ejColorMap = {};
   E.ejecutivos.forEach((ej, i) => ejColorMap[ej.nombre] = EJ_COLORS[i % EJ_COLORS.length]);
 
+  // Días que existen en la semana (calculado aquí para usarlo también en el header)
+  const diasEnSemana = new Set((ED.semanas[ED.semIdx]?.dias || []).map(([, dw]) => dw));
+
   // Header fijo con nombres de ejecutivos por día
   let headerHTML = `<div style="display:flex;position:sticky;top:0;z-index:10;
     background:var(--surface);border-bottom:2px solid var(--border2)">`;
   DIAS.forEach((dia, di) => {
+    const diaExiste = diasEnSemana.has(dia);
+    const colW = LW + E.ejecutivos.length * getCW();
+    if (!diaExiste) {
+      headerHTML += `<div style="display:flex;border-left:${di ? '2px' : '0'} solid var(--border2);
+        width:${colW}px;opacity:0.3">
+        <div style="width:${LW}px;font-size:9px;font-weight:700;color:var(--muted);
+          text-align:center;padding:4px 2px;background:var(--surface2);
+          text-transform:uppercase;letter-spacing:.5px">${DIAS_SHORT[di]}</div>
+        <div style="flex:1;text-align:center;padding:4px 2px;font-size:9px;color:var(--muted)">N/A</div>
+      </div>`;
+      return;
+    }
     headerHTML += `<div style="display:flex;border-left:${di ? '2px' : '0'} solid var(--border2)">
       <div style="width:${LW}px;font-size:9px;font-weight:700;color:var(--muted);
         text-align:center;padding:4px 2px;background:var(--surface2);
@@ -196,6 +201,24 @@ function renderGrid() {
   // Filas de slots con columna de hora coloreada por cobertura
   let bodyHTML = `<div style="display:flex;position:relative">`;
   DIAS.forEach((dia, di) => {
+    const diaExiste = diasEnSemana.has(dia);
+    const colW = LW + E.ejecutivos.length * getCW();
+
+    if (!diaExiste) {
+      // Día no existe en esta semana (semana parcial inicio/fin de mes): columna atenuada
+      bodyHTML += `<div style="display:flex;flex-direction:column;
+        border-left:${di ? '2px' : '0'} solid var(--border2);position:relative;
+        width:${colW}px;opacity:0.25;pointer-events:none;
+        background:repeating-linear-gradient(45deg,#f0f2f5 0px,#f0f2f5 4px,#f8f9fb 4px,#f8f9fb 8px)">
+        <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+          font-size:9px;color:#94a3b8;font-weight:600;text-align:center;white-space:nowrap">
+          N/A
+        </div>
+        <div style="height:${nSlots * SH}px"></div>
+      </div>`;
+      return;
+    }
+
     bodyHTML += `<div style="display:flex;flex-direction:column;
       border-left:${di ? '2px' : '0'} solid var(--border2);position:relative">`;
 
@@ -235,7 +258,7 @@ function renderGrid() {
       bodyHTML += `</div>`;
     }
 
-    // Botón "+" para ejecutivos sin turno
+    // Botón "+" para ejecutivos sin turno (solo en días que existen en la semana)
     E.ejecutivos.forEach((ej, ejIdx) => {
       const d = sem[ej.nombre]?.[dia];
       if (!d || !d.activo) {
@@ -270,7 +293,9 @@ function drawBlocks(sem) {
   const ejColorMap = {};
   E.ejecutivos.forEach((ej, i) => ejColorMap[ej.nombre] = EJ_COLORS[i % EJ_COLORS.length]);
 
+  const diasEnSem = new Set((ED.semanas[ED.semIdx]?.dias || []).map(([, dw]) => dw));
   DIAS.forEach((dia, di) => {
+    if (!diasEnSem.has(dia)) return;
     E.ejecutivos.forEach((ej, ejIdx) => {
       const d = sem[ej.nombre]?.[dia];
       if (!d || !d.activo) return;
@@ -608,37 +633,26 @@ function tipHide() {
   if (tip) tip.style.display = 'none';
 }
 
-// ── RESUMEN HORAS MENSUAL ─────────────────────────────────────────────────────
+// ── RESUMEN HORAS SEMANA ──────────────────────────────────────────────────────
 function renderResumen() {
   const area = document.getElementById('resumen-area');
   if (!area) return;
+  const semMap = ED.turnos[0] || {};
   const rows = E.ejecutivos.map(ej => {
-    const semH = ED.semanas.map((_, i) => {
-      const map = ED.turnos[i] || {};
-      return Object.values(map[ej.nombre] || {}).filter(d => d.activo).reduce((s, d) => s + horasTrabajadas(d.dur), 0);
-    });
-    const tot = semH.reduce((a, b) => a + b, 0);
-    const maxT = ej.horas_semana * ED.semanas.length;
-    const c = tot > maxT ? '#c0392b' : tot < ej.horas_semana * .8 ? 'var(--warn)' : 'var(--success)';
+    const hSem = Object.values(semMap[ej.nombre] || {}).filter(d => d.activo).reduce((s, d) => s + horasTrabajadas(d.dur), 0);
+    const maxSem = ej.horas_semana;
+    const c = hSem > maxSem ? '#c0392b' : hSem < maxSem * 0.8 ? 'var(--warn)' : 'var(--success)';
     return `<tr>
       <td style="font-weight:600">${ej.nombre}</td>
-      ${semH.map((h, i) => `
-        <td style="font-family:var(--mono);
-          font-weight:${i === ED.semIdx ? '700' : '400'};
-          background:${i === ED.semIdx ? 'var(--accent-lt)' : ''}">${h}h</td>`).join('')}
-      <td style="font-family:var(--mono);font-weight:700;color:${c}">${tot}h</td>
-      <td style="font-family:var(--mono);color:var(--muted)">${maxT}h</td>
+      <td style="font-family:var(--mono);font-weight:700;color:${c}">${hSem}h</td>
+      <td style="font-family:var(--mono);color:var(--muted)">${maxSem}h</td>
     </tr>`;
   }).join('');
 
   area.innerHTML = `<div class="table-card">
-    <div class="table-card-header"><div class="table-card-title">Resumen de Horas Mensual</div></div>
+    <div class="table-card-header"><div class="table-card-title">Resumen de Horas — Semana tipo</div></div>
     <div class="table-scroll"><table class="ej-table">
-      <thead><tr>
-        <th>Ejecutivo</th>
-        ${ED.semanas.map((_, i) => `<th>Sem ${i + 1}</th>`).join('')}
-        <th>Total</th><th>Máx</th>
-      </tr></thead>
+      <thead><tr><th>Ejecutivo</th><th>Horas / sem</th><th>Máx / sem</th></tr></thead>
       <tbody>${rows}</tbody>
     </table></div>
   </div>`;
@@ -647,35 +661,25 @@ function renderResumen() {
 // ── GUARDAR MODELO EDITADO ────────────────────────────────────────────────────
 function buildTurnosFromED() {
   const turnos = [];
-  ED.semanas.forEach((sem, wIdx) => {
-    const semMap = ED.turnos[wIdx] || {};
-    E.ejecutivos.forEach(ej => {
-      DIAS.forEach(dia => {
-        const d = semMap[ej.nombre]?.[dia];
-        const fechaEntry = sem.dias.find(([, dw]) => dw === dia);
-        const fecha = fechaEntry ? fechaEntry[0] : '';
-        if (!d || !d.activo) {
-          turnos.push({ ejecutivo: ej.nombre, semana: sem.semana, fecha, dia, libre: true });
-        } else {
-          turnos.push({
-            ejecutivo: ej.nombre,
-            semana: sem.semana,
-            fecha,
-            dia,
-            libre: false,
-            entrada: slot2str(d.ent),
-            salida: slot2str(d.ent + d.dur),
-            duracion_h: horasTrabajadas(d.dur),
-            colacion: tieneColacion(d.dur),
-            colacion_offset: d.col ?? Math.floor(d.dur / 2)
-          });
-        }
-      });
-      // Domingos siempre libres
-      sem.dias.forEach(([fecha, dow]) => {
-        if (dow === 'domingo')
-          turnos.push({ ejecutivo: ej.nombre, semana: sem.semana, fecha, dia: 'domingo', libre: true });
-      });
+  const semMap = ED.turnos[0] || {};
+  const LABEL_MAP = { lunes:'Lun', martes:'Mar', 'miércoles':'Mié', jueves:'Jue', viernes:'Vie', 'sábado':'Sáb' };
+  E.ejecutivos.forEach(ej => {
+    DIAS.forEach(dia => {
+      const d = semMap[ej.nombre]?.[dia];
+      const fecha = LABEL_MAP[dia] || dia;
+      if (!d || !d.activo) {
+        turnos.push({ ejecutivo: ej.nombre, semana: 1, fecha, dia, libre: true });
+      } else {
+        turnos.push({
+          ejecutivo: ej.nombre, semana: 1, fecha, dia,
+          libre: false,
+          entrada: slot2str(d.ent),
+          salida: slot2str(d.ent + d.dur),
+          duracion_h: horasTrabajadas(d.dur),
+          colacion: tieneColacion(d.dur),
+          colacion_offset: d.col ?? Math.floor(d.dur / 2)
+        });
+      }
     });
   });
   return turnos;
@@ -693,21 +697,19 @@ function mostrarModalGuardarEditado() {
 // ── EXPORTAR EXCEL ────────────────────────────────────────────────────────────
 function exportarExcelTurnos() {
   const wb = XLSX.utils.book_new();
-  ED.semanas.forEach((sem, wIdx) => {
-    const semMap = ED.turnos[wIdx] || {};
-    const rows = [['Ejecutivo', 'Día', 'Entrada', 'Salida', 'Duración (h)', 'Colación']];
-    E.ejecutivos.forEach(ej => {
-      DIAS.forEach(dia => {
-        const d = semMap[ej.nombre]?.[dia];
-        if (!d || !d.activo) return;
-        rows.push([ej.nombre, dia, slot2str(d.ent), slot2str(d.ent + d.dur),
+  const semMap = ED.turnos[0] || {};
+  const rows = [['Ejecutivo', 'Día', 'Entrada', 'Salida', 'Duración (h)', 'Colación']];
+  E.ejecutivos.forEach(ej => {
+    DIAS.forEach(dia => {
+      const d = semMap[ej.nombre]?.[dia];
+      if (!d || !d.activo) return;
+      rows.push([ej.nombre, dia, slot2str(d.ent), slot2str(d.ent + d.dur),
         horasTrabajadas(d.dur), tieneColacion(d.dur) ? '30 min' : '—']);
-      });
     });
-    const ws = XLSX.utils.aoa_to_sheet(rows);
-    ws['!cols'] = [{ wch: 20 }, { wch: 12 }, { wch: 8 }, { wch: 8 }, { wch: 12 }, { wch: 10 }];
-    XLSX.utils.book_append_sheet(wb, ws, `Semana ${wIdx + 1}`);
   });
+  const ws = XLSX.utils.aoa_to_sheet(rows);
+  ws['!cols'] = [{ wch: 20 }, { wch: 12 }, { wch: 8 }, { wch: 8 }, { wch: 12 }, { wch: 10 }];
+  XLSX.utils.book_append_sheet(wb, ws, 'Semana tipo');
   XLSX.writeFile(wb, `Turnos_CEM_${new Date().toISOString().slice(0, 10)}.xlsx`);
   showToast('Turnos exportados', 'ok');
 }

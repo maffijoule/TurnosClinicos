@@ -73,8 +73,6 @@ def resolver(data):
     demanda    = data['demanda']        # {dow: {HH:MM: float}}
     cfg        = data['configuracion']
 
-    mes          = int(cfg.get('mes', 6))
-    anio         = int(cfg.get('anio', 2025))
     P            = int(cfg.get('puestos_fisicos_max', 4))   # max shift types
     turno_min_sl = int(float(cfg.get('turno_min_horas', 4)) * 2)
     turno_max_sl = int(float(cfg.get('turno_max_horas', 9)) * 2)
@@ -99,7 +97,10 @@ def resolver(data):
     # BIG_M acotado al rango completo de operación (semana + sábado)
     BIG_M   = (max(FIN_OP, FIN_OP_SAT) - min(INICIO_OP, INICIO_OP_SAT)) + turno_max_sl + 2
 
-    semanas = build_semanas(mes, anio)
+    # Semana tipo genérica (sin dependencia de mes/año)
+    DIAS_SEMANA_TIPO = [('Lun','lunes'),('Mar','martes'),('Mié','miércoles'),
+                        ('Jue','jueves'),('Vie','viernes'),('Sáb','sábado')]
+    semana_gen = {'semana': 1, 'dias': DIAS_SEMANA_TIPO}
 
     DIAS_LABOR = ['lunes','martes','miércoles','jueves','viernes']
 
@@ -367,47 +368,41 @@ def resolver(data):
     asig_wd  = {n: next((k for k in K if v(A_wd[n,k])  > 0.5), None) for n in nombres}
     asig_sat = {n: next((k for k in K if v(A_sat[n,k]) > 0.5), None) for n in nombres}
 
-    # ── Build monthly turnos ──────────────────────────────────────────────────
+    # ── Build turnos (semana tipo genérica) ──────────────────────────────────
     turnos_out = []
-    for w_idx, sem in enumerate(semanas):
-        for n in nombres:
-            k_wd  = asig_wd.get(n)
-            k_sat = asig_sat.get(n)
-            ent_wd  = int(round(v(T_entry_wd[k_wd])))   if k_wd  is not None else None
-            dur_wd  = int(round(v(T_dur_wd[k_wd])))     if k_wd  is not None else None
-            ent_sat = int(round(v(T_entry_sat[k_sat]))) if k_sat is not None else None
-            dur_sat = int(round(v(T_dur_sat[k_sat])))   if k_sat is not None else None
+    for n in nombres:
+        k_wd  = asig_wd.get(n)
+        k_sat = asig_sat.get(n)
+        ent_wd  = int(round(v(T_entry_wd[k_wd])))   if k_wd  is not None else None
+        dur_wd  = int(round(v(T_dur_wd[k_wd])))     if k_wd  is not None else None
+        ent_sat = int(round(v(T_entry_sat[k_sat]))) if k_sat is not None else None
+        dur_sat = int(round(v(T_dur_sat[k_sat])))   if k_sat is not None else None
 
-            for fecha, dow in sem:
-                if dow == 'domingo':
-                    turnos_out.append({'ejecutivo':n,'semana':w_idx+1,
-                                       'fecha':fecha,'dia':dow,'libre':True})
-                elif dow == 'sábado':
-                    if v(W_sat[n]) > 0.5 and ent_sat is not None:
-                        col_off_sat = col_offset_sat.get(k_sat)
-                        worked_sat  = (dur_sat - (1 if col_off_sat is not None else 0)) * 0.5
-                        turnos_out.append({
-                            'ejecutivo':n,'semana':w_idx+1,'fecha':fecha,'dia':dow,'libre':False,
-                            'entrada':slot_str(ent_sat),'salida':slot_str(ent_sat+dur_sat),
-                            'duracion_h':worked_sat,'colacion':col_off_sat is not None,
-                            'colacion_offset': col_off_sat
-                        })
-                    else:
-                        turnos_out.append({'ejecutivo':n,'semana':w_idx+1,
-                                           'fecha':fecha,'dia':dow,'libre':True})
-                else:  # Mon-Fri
-                    if ent_wd is not None:
-                        col_off_wd = col_offset_wd.get(k_wd)
-                        worked_wd  = (dur_wd - (1 if col_off_wd is not None else 0)) * 0.5
-                        turnos_out.append({
-                            'ejecutivo':n,'semana':w_idx+1,'fecha':fecha,'dia':dow,'libre':False,
-                            'entrada':slot_str(ent_wd),'salida':slot_str(ent_wd+dur_wd),
-                            'duracion_h':worked_wd,'colacion':col_off_wd is not None,
-                            'colacion_offset': col_off_wd
-                        })
-                    else:
-                        turnos_out.append({'ejecutivo':n,'semana':w_idx+1,
-                                           'fecha':fecha,'dia':dow,'libre':True})
+        for label, dow in DIAS_SEMANA_TIPO:
+            if dow == 'sábado':
+                if v(W_sat[n]) > 0.5 and ent_sat is not None:
+                    col_off_sat = col_offset_sat.get(k_sat)
+                    worked_sat  = (dur_sat - (1 if col_off_sat is not None else 0)) * 0.5
+                    turnos_out.append({
+                        'ejecutivo':n,'semana':1,'fecha':label,'dia':dow,'libre':False,
+                        'entrada':slot_str(ent_sat),'salida':slot_str(ent_sat+dur_sat),
+                        'duracion_h':worked_sat,'colacion':col_off_sat is not None,
+                        'colacion_offset': col_off_sat
+                    })
+                else:
+                    turnos_out.append({'ejecutivo':n,'semana':1,'fecha':label,'dia':dow,'libre':True})
+            else:  # Mon-Fri
+                if ent_wd is not None:
+                    col_off_wd = col_offset_wd.get(k_wd)
+                    worked_wd  = (dur_wd - (1 if col_off_wd is not None else 0)) * 0.5
+                    turnos_out.append({
+                        'ejecutivo':n,'semana':1,'fecha':label,'dia':dow,'libre':False,
+                        'entrada':slot_str(ent_wd),'salida':slot_str(ent_wd+dur_wd),
+                        'duracion_h':worked_wd,'colacion':col_off_wd is not None,
+                        'colacion_offset': col_off_wd
+                    })
+                else:
+                    turnos_out.append({'ejecutivo':n,'semana':1,'fecha':label,'dia':dow,'libre':True})
 
     # ── Hours summary ─────────────────────────────────────────────────────────
     horas_out = {n:{} for n in nombres}
@@ -461,9 +456,7 @@ def resolver(data):
         'horas_ejecutivo':   horas_out,
         'dem_wd_profile':    {slot_str(s): dem_wd[s] for s in sorted(dem_wd) if dem_wd[s]>0},
         'dem_sat_profile':   {slot_str(s): dem_sat.get(s,0) for s in sorted(slots_sat)},
-        'semanas': [{'semana': w+1,
-                     'dias':   [(f,d) for f,d in sem if d!='domingo']}
-                    for w,sem in enumerate(semanas)]
+        'semanas':           [semana_gen]
     }
 
 
