@@ -332,29 +332,22 @@ def imagen_template():
         ws_tec.title = 'Tecnologos'
         ws_tec.column_dimensions['A'].width = 20
         ws_tec.column_dimensions['B'].width = 14
-        ws_tec.column_dimensions['C'].width = 18
 
-        for col, label in enumerate(['Nombre', 'Horas_mes', 'Especialidad_Resonancia'], 1):
+        for col, label in enumerate(['Nombre', 'Horas_mes'], 1):
             c = ws_tec.cell(row=1, column=col, value=label)
             style_header(c)
 
         tecnologos = [
-            ('TM 1', 160, 'no'),
-            ('TM 2', 160, 'no'),
-            ('TM 3', 160, 'si'),   # tiene resonancia
-            ('TM 4', 160, 'no'),
-            ('TM 5', 160, 'no'),
-            ('TM 6', 160, 'no'),
+            ('TM 1', 160),
+            ('TM 2', 160),
+            ('TM 3', 160),
+            ('TM 4', 160),
+            ('TM 5', 160),
+            ('TM 6', 160),
         ]
-        for r, (nombre, horas, res) in enumerate(tecnologos, 2):
+        for r, (nombre, horas) in enumerate(tecnologos, 2):
             ws_tec.cell(row=r, column=1, value=nombre).border = border
             ws_tec.cell(row=r, column=2, value=horas).border = border
-            ws_tec.cell(row=r, column=3, value=res).border = border
-
-        # Nota explicativa
-        ws_tec.cell(row=9, column=1,
-            value='Especialidad_Resonancia: "si" o "no". TMs sin especialidad no pueden hacer Resonancia.').font = Font(italic=True, size=9, color='64748B')
-        ws_tec.merge_cells('A9:C9')
 
         # ── Hojas de demanda por tipo de examen ───────────────────────────────
         for exam in EXAM_TYPES:

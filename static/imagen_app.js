@@ -22,12 +22,12 @@ const IMG = {
   hojas: {},       // { nombre: { horas[], dows[], avg: {h:{d:val}} } }
   examSel: [],     // nombres seleccionados
   tecnologos: [
-    { nombre: 'TM 1', resonancia: false, sel: true, horas_semana: 44 },
-    { nombre: 'TM 2', resonancia: false, sel: true, horas_semana: 44 },
-    { nombre: 'TM 3', resonancia: true,  sel: true, horas_semana: 44 },
-    { nombre: 'TM 4', resonancia: false, sel: true, horas_semana: 44 },
-    { nombre: 'TM 5', resonancia: false, sel: true, horas_semana: 44 },
-    { nombre: 'TM 6', resonancia: false, sel: true, horas_semana: 44 },
+    { nombre: 'TM 1', sel: true, horas_semana: 44 },
+    { nombre: 'TM 2', sel: true, horas_semana: 44 },
+    { nombre: 'TM 3', sel: true, horas_semana: 44 },
+    { nombre: 'TM 4', sel: true, horas_semana: 44 },
+    { nombre: 'TM 5', sel: true, horas_semana: 44 },
+    { nombre: 'TM 6', sel: true, horas_semana: 44 },
   ],
   params: {},  // no se usa en imagen
   duraciones: {
@@ -215,11 +215,10 @@ function imgHandleFile(file) {
         const rows = XLSX.utils.sheet_to_json(wb.Sheets[tmSheet], { header: 1, defval: '' });
         const tms = [];
         for (let r = 1; r < rows.length; r++) {
-          const [nombre, res, horas] = rows[r];
+          const [nombre, horas] = rows[r];
           if (!nombre) continue;
           tms.push({
             nombre: String(nombre).trim(),
-            resonancia: String(res).toLowerCase().startsWith('s') || res === true || res === 1,
             sel: true,
             horas_semana: Number(horas) || 44,
           });
@@ -318,7 +317,7 @@ function imgRenderResultado() {
 
   const tmBadges = tmSel.map(t =>
     `<span style="padding:2px 8px;border-radius:10px;background:var(--surface2);border:1px solid var(--border);font-size:10px;font-weight:600">
-      ${t.nombre}${t.resonancia ? ' 🔬' : ''}
+      ${t.nombre}
     </span>`
   ).join(' ');
 
@@ -336,7 +335,7 @@ function imgRenderResultado() {
     <div class="kpi-card ${tmSel.length >= Math.ceil(globalMax) ? 'green' : 'amber'}">
       <div class="kpi-label">TMs seleccionados</div>
       <div class="kpi-val">${tmSel.length}</div>
-      <div class="kpi-sub">${tmSel.filter(t => t.resonancia).length} con resonancia 🔬</div>
+      <div class="kpi-sub">${tmSel.length} seleccionados</div>
     </div>
     <div class="kpi-card">
       <div class="kpi-label">Franjas horarias</div>
@@ -499,7 +498,7 @@ function imgRenderExamenesPanel() {
           ${t.nombre}${t.resonancia ? ' 🔬' : ''}
         </button>`).join('')}
     </div>
-    <div style="font-size:10px;color:var(--muted)">${tmSel.length} TM(s) · ${tmSel.filter(t => t.resonancia).length} con resonancia</div>
+    <div style="font-size:10px;color:var(--muted)">${tmSel.length} TM(s) seleccionados</div>
   </div>`;
 
   const EXAM_DUR_DEFAULTS = {
@@ -549,10 +548,6 @@ function imgRenderTecnologosPanel() {
       <div id="img-agregar-tm" style="display:none;margin-bottom:10px;padding:10px;background:var(--accent-lt);border-radius:7px;border:1px solid var(--border)">
         <div style="font-size:10px;font-weight:700;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px">Nuevo Tecnólogo</div>
         <input type="text" id="img-tm-nombre" placeholder="Nombre (ej: TM 7)" class="cfg-input" style="margin-bottom:6px">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;padding:6px 0">
-          <input type="checkbox" id="img-tm-res" style="cursor:pointer;width:14px;height:14px">
-          <label for="img-tm-res" style="font-size:11px;color:var(--text2);cursor:pointer">Especialidad Resonancia 🔬</label>
-        </div>
         <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">
           <span style="font-size:11px;color:var(--text2)">Horas/sem:</span>
           <input type="number" id="img-tm-horas" min="4" max="48" value="44" class="cfg-input" style="width:60px">
@@ -566,23 +561,12 @@ function imgRenderTecnologosPanel() {
         <div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid #f0f2f5">
           <div>
             <div style="font-size:11px;font-weight:600;color:var(--text)">${t.nombre}</div>
-            <div style="font-size:10px;color:var(--muted)">${t.horas_semana}h/sem · ${t.resonancia ? 'Resonancia 🔬' : 'Sin especialidad'}</div>
+            <div style="font-size:10px;color:var(--muted)">${t.horas_semana}h/sem</div>
           </div>
           <div style="display:flex;align-items:center;gap:6px">
-            <button onclick="imgToggleResonancia(${i})" title="${t.resonancia ? 'Quitar resonancia' : 'Agregar resonancia'}"
-              style="border:1px solid ${t.resonancia ? 'var(--accent)' : 'var(--border)'};
-              background:${t.resonancia ? 'var(--accent-lt)' : 'transparent'};
-              color:${t.resonancia ? 'var(--accent)' : 'var(--muted)'};
-              border-radius:4px;padding:2px 7px;font-size:11px;cursor:pointer">🔬</button>
             <button onclick="imgEliminarTM(${i})" style="border:none;background:none;color:#c0392b;cursor:pointer;font-size:13px;padding:0 2px">×</button>
           </div>
         </div>`).join('')}
-    </div>
-    <div class="sidebar-section">
-      <div style="font-size:10px;color:var(--muted);line-height:1.5;padding:4px 0">
-        🔬 La especialidad de resonancia es <strong>referencial</strong> (PTI).<br>
-        Un TM sin especialidad no puede hacer resonancia; uno con especialidad puede hacer cualquier examen.
-      </div>
     </div>
     <div class="sidebar-section">
       <div class="section-label">Solver</div>
@@ -696,21 +680,16 @@ function imgToggleTM(i) {
   imgRenderExamenesPanel();
   imgCalcular();
 }
-function imgToggleResonancia(i) {
-  IMG.tecnologos[i].resonancia = !IMG.tecnologos[i].resonancia;
-  imgRenderTecnologosPanel();
-}
 function imgToggleAgregarTM() {
   const el = document.getElementById('img-agregar-tm');
   if (el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
 }
 function imgAgregarTM() {
   const nombre = document.getElementById('img-tm-nombre')?.value?.trim();
-  const res = document.getElementById('img-tm-res')?.checked;
   const horas = parseInt(document.getElementById('img-tm-horas')?.value) || 44;
   if (!nombre) { showToast('Ingresa un nombre', 'err'); return; }
   if (IMG.tecnologos.find(t => t.nombre === nombre)) { showToast('Ya existe ese nombre', 'err'); return; }
-  IMG.tecnologos.push({ nombre, resonancia: !!res, sel: true, horas_semana: horas });
+  IMG.tecnologos.push({ nombre, sel: true, horas_semana: horas });
   showToast(`${nombre} agregado`, 'ok');
   imgRenderTecnologosPanel();
   imgRenderExamenesPanel();
@@ -750,7 +729,6 @@ async function imgEjecutarSolver() {
     tecnologos: tmsSel.map(t => ({
       nombre:       t.nombre,
       horas_semana: t.horas_semana || 44,
-      resonancia:   t.resonancia,
     })),
     demanda,
     configuracion: {
@@ -857,7 +835,7 @@ function imgExportarExcel() {
   const ws3 = XLSX.utils.aoa_to_sheet([
     ['Parámetro', 'Valor'],
     ['Exámenes', IMG.examSel.join(', ')],
-    ['TMs incluidos', tmSel.map(t => t.nombre + (t.resonancia ? ' (🔬)' : '')).join(', ')],
+    ['TMs incluidos', tmSel.map(t => t.nombre).join(', ')],
     ...durRows3,
     [], ['Fórmula', 'TMs(h,d) = Σ D_examen(h,d) × T_examen / 60'],
     ['Productividad', '100% (sin factor)'],

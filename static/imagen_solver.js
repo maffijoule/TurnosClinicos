@@ -122,7 +122,7 @@ function imgRenderKPI() {
     <div class="kpi-card">
       <div class="kpi-label">Tecnólogos</div>
       <div class="kpi-val">${tms.length}</div>
-      <div class="kpi-sub">${tms.filter(t => t.resonancia).length} con resonancia 🔬</div>
+      <div class="kpi-sub">${tms.length} seleccionados</div>
     </div>
     <div class="kpi-card">
       <div class="kpi-label">Horas equipo / sem</div>
@@ -182,7 +182,7 @@ function imgRenderGrid() {
       headerHTML += `<div style="width:${CW_}px;font-size:10px;font-weight:600;
         text-align:center;padding:4px 2px;background:${ejColorMap[tm.nombre]}88;
         border-left:1px solid var(--border);white-space:nowrap;overflow:hidden">
-        ${tm.nombre.split(' ')[0]}${tm.resonancia ? ' 🔬' : ''}
+        ${tm.nombre.split(' ')[0]}
       </div>`;
     });
     headerHTML += `</div>`;
@@ -531,7 +531,7 @@ function imgRenderHorasPanel() {
       const c   = h > max ? '#c0392b' : h > max * .9 ? 'var(--warn)' : 'var(--success)';
       return `<div id="img-hp_${tm.nombre.replace(/\W/g, '_')}" style="margin-bottom:12px">
         <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px">
-          <span style="font-weight:600">${tm.nombre.split(' ').slice(0,2).join(' ')}${tm.resonancia ? ' 🔬' : ''}</span>
+          <span style="font-weight:600">${tm.nombre.split(' ').slice(0,2).join(' ')}</span>
           <span style="font-family:var(--mono);color:${c};font-weight:700">${h}/${max}h</span>
         </div>
         <div style="height:5px;background:var(--border);border-radius:3px">
@@ -610,7 +610,7 @@ function imgRenderResumen() {
     const max  = (tm.horas_semana || 44) * IMG_ED.semanas.length;
     const c    = tot > max ? '#c0392b' : tot < (tm.horas_semana || 44) * .8 ? 'var(--warn)' : 'var(--success)';
     return `<tr>
-      <td style="font-weight:600">${tm.nombre}${tm.resonancia ? ' 🔬' : ''}</td>
+      <td style="font-weight:600">${tm.nombre}</td>
       ${semH.map((h, i) => `
         <td style="font-family:var(--mono);
           font-weight:${i === IMG_ED.semIdx ? '700' : '400'};
@@ -755,14 +755,13 @@ function imgExportarExcelTurnos() {
   const wb = XLSX.utils.book_new();
   IMG_ED.semanas.forEach((sem, wIdx) => {
     const semMap = IMG_ED.turnos[wIdx] || {};
-    const rows   = [['Tecnólogo', 'Resonancia', 'Día', 'Entrada', 'Salida', 'Duración (h)', 'Colación']];
+    const rows   = [['Tecnólogo', 'Día', 'Entrada', 'Salida', 'Duración (h)', 'Colación']];
     imgGetTMs().forEach(tm => {
       DIAS.forEach(dia => {
         const d = semMap[tm.nombre]?.[dia];
         if (!d || !d.activo) return;
         rows.push([
           tm.nombre,
-          tm.resonancia ? 'Sí' : 'No',
           dia,
           slot2str(d.ent),
           slot2str(d.ent + d.dur),
