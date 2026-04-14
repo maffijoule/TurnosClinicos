@@ -23,6 +23,7 @@
         onclick="switchModulo('ambulatorio')">Ambulatorio</button>
       <button class="tab-btn" data-modulo="hospitalizado" onclick="switchModulo('hospitalizado')">Hospitalizado</button>
       <button class="tab-btn" data-modulo="imagen" onclick="switchModulo('imagen')">Imagen</button>
+      <button class="tab-btn" data-modulo="libre" onclick="switchModulo('libre')">Modo libre</button>
     </div>
   </div>
 
@@ -44,6 +45,10 @@
         <button class="subtab-btn" id="st-img-tecnologos" onclick="switchImgSubtab('tecnologos')">Tecnólogos</button>
         <button class="subtab-btn" id="st-img-config" onclick="switchImgSubtab('config')">Config</button>
         <button class="subtab-btn" id="st-img-modelos" onclick="switchImgSubtab('modelos')">Modelos</button>
+      </div>
+      <div style="display:none;border-bottom:1px solid var(--border)" id="libre-subtab-bar">
+        <button class="subtab-btn active" id="st-libre-personas" onclick="switchLibreSubtab('personas')">Personas</button>
+        <button class="subtab-btn" id="st-libre-modelos" onclick="switchLibreSubtab('modelos')">Modelos</button>
       </div>
 
       <!-- PANEL: DEMANDA -->
@@ -236,6 +241,11 @@
       <!-- PANEL: IMAGEN MODELOS -->
       <div id="panel-img-modelos" style="display:none"></div>
 
+      <!-- PANEL: MODO LIBRE PERSONAS -->
+      <div id="panel-libre-personas" style="display:none"></div>
+      <!-- PANEL: MODO LIBRE MODELOS -->
+      <div id="panel-libre-modelos" style="display:none"></div>
+
     </div><!-- /sidebar -->
 
     <div class="content" id="content">
@@ -256,6 +266,7 @@
   <script src="/static/hosp_app.js?v=2"></script>
   <script src="/static/imagen_app.js?v=2"></script>
   <script src="/static/imagen_solver.js?v=2"></script>
+  <script src="/static/libre_app.js?v=1"></script>
 </body>
 
 </html>

@@ -491,11 +491,12 @@ function switchModulo(m) {
     if (b.getAttribute('data-modulo') === m) b.classList.add('active');
   });
 
-  const ALL_SUBTAB_BARS = ['amb-subtab-bar', 'hosp-subtab-bar', 'img-subtab-bar'];
+  const ALL_SUBTAB_BARS = ['amb-subtab-bar', 'hosp-subtab-bar', 'img-subtab-bar', 'libre-subtab-bar'];
   const ALL_PANELS = [
     'panel-demanda', 'panel-ejecutivos', 'panel-config', 'panel-modelos',
     'panel-hosp-config', 'panel-hosp-modelos',
-    'panel-img-examenes', 'panel-img-tecnologos', 'panel-img-config', 'panel-img-modelos'
+    'panel-img-examenes', 'panel-img-tecnologos', 'panel-img-config', 'panel-img-modelos',
+    'panel-libre-personas', 'panel-libre-modelos'
   ];
 
   ALL_SUBTAB_BARS.forEach(id => {
@@ -514,6 +515,9 @@ function switchModulo(m) {
   } else if (m === 'imagen') {
     document.getElementById('img-subtab-bar').style.display = '';
     switchImgSubtab(window._imgSubtab || 'examenes');
+  } else if (m === 'libre') {
+    document.getElementById('libre-subtab-bar').style.display = '';
+    libreInit();
   }
 }
 
