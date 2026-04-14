@@ -111,7 +111,7 @@ def resolver_semanal_imagen(tecnologos, demanda, configuracion):
     T_dur_sat   = {k: pulp.LpVariable(f"TDS_{k}", lowBound=turno_min_sl,  upBound=turno_max_sl,            cat='Integer') for k in K}
     T_used_sat  = {k: pulp.LpVariable(f"TUS_{k}", cat='Binary') for k in K}
 
-    COL_MIN_SL  = 10
+    COL_MIN_SL  = 13   # 6.5 h en slots de 30 min
     Has_col_wd  = {k: pulp.LpVariable(f"HCW_{k}", cat='Binary') for k in K}
     Has_col_sat = {k: pulp.LpVariable(f"HCS_{k}", cat='Binary') for k in K}
 

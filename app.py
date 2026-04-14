@@ -162,7 +162,7 @@ def resolver(data):
     T_used_sat  = {k: pulp.LpVariable(f"TUS_{k}", cat='Binary') for k in K}
 
     # ── Colación separada por día ─────────────────────────────────────────────
-    COL_MIN_SL  = 10
+    COL_MIN_SL  = 13   # 6.5 h en slots de 30 min
     Has_col_wd  = {k: pulp.LpVariable(f"HCW_{k}", cat='Binary') for k in K}
     Has_col_sat = {k: pulp.LpVariable(f"HCS_{k}", cat='Binary') for k in K}
 
@@ -437,7 +437,7 @@ def resolver(data):
         semana_tipo.append({
             'ejecutivo':    n,
             'duracion_h':   dur*0.5,
-            'colacion':     dur>10,
+            'colacion':     dur>13,
             'dias_trabajo': dias_lab_all,
             'dias_libres':  ['domingo'] if v(W_sat[n]) > 0.5 else ['sábado','domingo'],
             'entradas':     entradas,
