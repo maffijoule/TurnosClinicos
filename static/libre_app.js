@@ -14,6 +14,7 @@ const LIBRE = {
   ],
   turnosSem: {},   // { [nombre]: { [dia]: { ent, sal, col, tid? } } }
   turnosMes: {},   // { [nombre]: { [YYYY-MM-DD]: { ent, sal, col, tid? } } }
+  demanda:   {},   // { [dia]: { [hora]: number } }  — mínimo requerido editable
   cfg: {
     mes:  new Date().getMonth() + 1,
     anio: new Date().getFullYear(),
@@ -77,6 +78,51 @@ function libreHColor(hSem, contrato) {
   if (Math.abs(d) < 0.5) return 'var(--success)';
   if (d < 0)             return 'var(--warn)';
   return '#c0392b';
+}
+
+// ── COBERTURA ─────────────────────────────────────────────────────────────────
+function libreGetHoraRange() {
+  let min = 7, max = 22;
+  Object.values(LIBRE.turnosSem).forEach(dias =>
+    Object.values(dias).forEach(t => {
+      if (!t?.ent || !t?.sal) return;
+      const e = parseInt(t.ent), s = parseInt(t.sal);
+      if (e < min) min = e;
+      if (s > e && s > max) max = s;   // no extender si cruza medianoche
+    })
+  );
+  return { min: Math.max(0, min), max: Math.min(24, max) };
+}
+
+function libreCovers(t, hora) {
+  if (!t?.ent || !t?.sal) return false;
+  const e = libreTimeToMin(t.ent);
+  const s = libreTimeToMin(t.sal);
+  const h = hora * 60;
+  if (s > e) return h >= e && h < s;   // turno normal
+  return h >= e || h < s;               // turno nocturno cruzando medianoche
+}
+
+function libreComputeCoverage(dia, hora) {
+  return LIBRE.personas.reduce((n, p) => n + (libreCovers(libreGetSem(p.nombre, dia), hora) ? 1 : 0), 0);
+}
+
+function libreGetDemanda(dia, hora) { return LIBRE.demanda?.[dia]?.[hora] ?? null; }
+function libreSetDemanda(dia, hora, val) {
+  if (!LIBRE.demanda[dia]) LIBRE.demanda[dia] = {};
+  if (val === null || val === '' || isNaN(+val) || +val < 0) delete LIBRE.demanda[dia][hora];
+  else LIBRE.demanda[dia][hora] = +val;
+}
+
+function _libreHeatBg(val, total) {
+  if (val === 0) return '#f9fafb';
+  const r = Math.min(1, val / Math.max(total, 1));
+  const lo = [219,234,254], hi = [30,58,138];
+  const mix = (a,b,t) => Math.round(a + (b-a)*t);
+  return `rgb(${mix(lo[0],hi[0],r)},${mix(lo[1],hi[1],r)},${mix(lo[2],hi[2],r)})`;
+}
+function _libreHeatText(val, total) {
+  return Math.min(1, val / Math.max(total, 1)) > 0.5 ? '#fff' : 'var(--text)';
 }
 
 function libreHorasSemPersona(nombre) {
@@ -432,6 +478,7 @@ function _libreGridSemanaHTML() {
         <tbody>${rows}</tbody>
       </table>
     </div>
+    ${_libreTablaCobertura()}
   </div>`;
 }
 
@@ -467,6 +514,144 @@ function _libreSemCell(nombre, dia) {
       ${_libreTipoBadges(nombre, dia, 'sem')}
     </div>
   </td>`;
+}
+
+// ── TABLA COBERTURA POR HORA (semana tipo) ────────────────────────────────────
+function _libreTablaCobertura() {
+  const { min, max } = libreGetHoraRange();
+  const total = LIBRE.personas.length;
+  if (total === 0) return '';
+
+  const thead = LIBRE_DIAS_SEM.map(d =>
+    `<th style="padding:6px 4px;font-size:11px;font-weight:700;color:var(--muted);
+      text-align:center;min-width:64px;border-right:1px solid var(--border)">${LIBRE_LABEL_SEM[d]}</th>`
+  ).join('');
+
+  const rows = [];
+  for (let h = min; h < max; h++) {
+    let anyActive = LIBRE_DIAS_SEM.some(d => libreComputeCoverage(d, h) > 0 || libreGetDemanda(d, h) !== null);
+    const cells = LIBRE_DIAS_SEM.map(d => {
+      const actual  = libreComputeCoverage(d, h);
+      const target  = libreGetDemanda(d, h);
+      const hasT    = target !== null;
+      let bg, tc;
+      if (actual === 0 && !hasT) {
+        bg = '#f9fafb'; tc = '#d1d5db';
+      } else if (hasT) {
+        bg = actual >= target ? '#dcfce7' : '#fee2e2';
+        tc = actual >= target ? '#166534' : '#991b1b';
+      } else {
+        bg = _libreHeatBg(actual, total);
+        tc = _libreHeatText(actual, total);
+      }
+      const ne = encodeURIComponent(d);
+      return `<td style="padding:2px;border-right:1px solid var(--border);background:${bg};cursor:pointer"
+        onclick="libreEditDemandaCell('${ne}',${h},this)" title="Clic para fijar mínimo — ${LIBRE_LABEL_SEM[d]} ${String(h).padStart(2,'0')}:00">
+        <div style="text-align:center;padding:3px 0">
+          <div style="font-size:12px;font-weight:700;color:${tc}">${actual}</div>
+          ${hasT ? `<div style="font-size:9px;color:${tc};opacity:.7">mín ${target}</div>` : '<div style="font-size:9px;color:#d1d5db">—</div>'}
+        </div>
+      </td>`;
+    }).join('');
+    rows.push(`<tr>
+      <td style="padding:3px 8px;font-family:var(--mono);font-size:10px;color:var(--muted);
+        white-space:nowrap;border-right:2px solid var(--border2);background:var(--surface2)">
+        ${String(h).padStart(2,'0')}:00</td>
+      ${cells}
+    </tr>`);
+  }
+
+  // Fila totales por día
+  const totRow = LIBRE_DIAS_SEM.map(d => {
+    const horasCubiertas = (() => { let n=0; for(let h=min;h<max;h++) if(libreComputeCoverage(d,h)>0) n++; return n; })();
+    return `<td style="padding:4px 2px;text-align:center;border-right:1px solid var(--border);
+      background:var(--surface2);font-size:10px;font-weight:600;color:var(--muted)">${horasCubiertas}h</td>`;
+  }).join('');
+
+  // Leyenda
+  const leyenda = `<div style="display:flex;align-items:center;gap:10px;font-size:10px;color:var(--muted)">
+    <div style="display:flex;align-items:center;gap:4px">
+      <div style="display:flex;gap:2px">
+        ${[0,.25,.5,.75,1].map(r=>`<span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:${r===0?'#f9fafb':_libreHeatBg(r*total,total)}"></span>`).join('')}
+      </div>
+      0 → ${total} personas
+    </div>
+    <div style="display:flex;align-items:center;gap:4px">
+      <span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#dcfce7;border:1px solid #22c55e"></span>
+      cubre mínimo
+    </div>
+    <div style="display:flex;align-items:center;gap:4px">
+      <span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#fee2e2;border:1px solid #ef4444"></span>
+      bajo mínimo
+    </div>
+    <span style="color:var(--accent);cursor:pointer" onclick="libreLimpiarDemanda()" title="Eliminar todos los mínimos">✕ Limpiar mínimos</span>
+  </div>`;
+
+  return `<div style="margin-top:20px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex-wrap:wrap;gap:8px">
+      <div>
+        <div style="font-size:14px;font-weight:700;color:var(--text)">Cobertura por hora</div>
+        <div style="font-size:11px;color:var(--muted)">Personas en turno · Clic en celda para editar mínimo requerido</div>
+      </div>
+      ${leyenda}
+    </div>
+    <div style="overflow-x:auto;border-radius:8px;border:1px solid var(--border)">
+      <table style="border-collapse:collapse;width:100%">
+        <thead>
+          <tr style="background:var(--surface2)">
+            <th style="padding:8px;font-size:11px;font-weight:700;color:var(--muted);text-align:left;
+              border-right:2px solid var(--border2);min-width:60px;position:sticky;left:0;background:var(--surface2)">Hora</th>
+            ${thead}
+          </tr>
+        </thead>
+        <tbody>
+          ${rows.join('')}
+          <tr style="border-top:2px solid var(--border2)">
+            <td style="padding:4px 8px;font-size:10px;font-weight:700;color:var(--muted);
+              border-right:2px solid var(--border2);background:var(--surface2)">Horas</td>
+            ${totRow}
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>`;
+}
+
+function libreEditDemandaCell(ne, hora, td) {
+  const dia     = decodeURIComponent(ne);
+  const current = libreGetDemanda(dia, hora);
+
+  const input = document.createElement('input');
+  input.type  = 'number'; input.min = '0'; input.max = '99'; input.step = '1';
+  input.value = current ?? '';
+  input.placeholder = '—';
+  input.style.cssText = `width:44px;text-align:center;font-size:12px;font-weight:700;
+    border:2px solid var(--accent);border-radius:4px;padding:2px 0;outline:none;
+    background:var(--accent-lt);color:var(--accent)`;
+
+  td.innerHTML = '';
+  td.style.padding = '4px 2px';
+  td.appendChild(input);
+  input.focus(); input.select();
+
+  let committed = false;
+  const commit = () => {
+    if (committed) return; committed = true;
+    libreSetDemanda(dia, hora, input.value);
+    libreRenderContent();
+  };
+  input.onblur    = commit;
+  input.onkeydown = e => {
+    if (e.key === 'Enter')  { input.blur(); }
+    if (e.key === 'Escape') { committed = true; libreRenderContent(); }
+    e.stopPropagation();
+  };
+}
+
+function libreLimpiarDemanda() {
+  if (!confirm('¿Eliminar todos los mínimos requeridos?')) return;
+  LIBRE.demanda = {};
+  libreRenderContent();
 }
 
 // ── GRID MES CALENDARIO ───────────────────────────────────────────────────────
@@ -867,6 +1052,7 @@ function libreGuardarModelo() {
     turnosTipo:  JSON.parse(JSON.stringify(LIBRE.turnosTipo)),
     turnosSem:   JSON.parse(JSON.stringify(LIBRE.turnosSem)),
     turnosMes:   JSON.parse(JSON.stringify(LIBRE.turnosMes)),
+    demanda:     JSON.parse(JSON.stringify(LIBRE.demanda)),
     cfg:         JSON.parse(JSON.stringify(LIBRE.cfg)),
     _ttNextId:   LIBRE._ttNextId,
   };
@@ -886,6 +1072,7 @@ function libreCargarModelo(id) {
   LIBRE.turnosTipo = JSON.parse(JSON.stringify(m.turnosTipo || []));
   LIBRE.turnosSem  = JSON.parse(JSON.stringify(m.turnosSem  || {}));
   LIBRE.turnosMes  = JSON.parse(JSON.stringify(m.turnosMes  || {}));
+  LIBRE.demanda    = JSON.parse(JSON.stringify(m.demanda    || {}));
   LIBRE.cfg        = JSON.parse(JSON.stringify(m.cfg));
   LIBRE._ttNextId  = m._ttNextId || 10;
   showToast(`Modelo "${m.nombre}" cargado`, 'ok');
@@ -960,6 +1147,25 @@ function libreExportarExcel() {
     resMes.push([p.nombre, p.horas_contrato, +tot.toFixed(2), +prom.toFixed(2), +(prom-p.horas_contrato).toFixed(2)]);
   });
   XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(resMes), `Resumen_${LIBRE_MESES[mes]}`);
+
+  // Hoja: Cobertura por hora (semana tipo)
+  const { min: hMin, max: hMax } = libreGetHoraRange();
+  const hdrCob = ['Hora', ...LIBRE_DIAS_SEM.map(d => LIBRE_LABEL_SEM[d])];
+  const rowsCob = [hdrCob];
+  for (let h = hMin; h < hMax; h++) {
+    rowsCob.push([
+      `${String(h).padStart(2,'0')}:00`,
+      ...LIBRE_DIAS_SEM.map(d => libreComputeCoverage(d, h))
+    ]);
+  }
+  // Fila de mínimos
+  const rowMin = ['Mínimo req.', ...LIBRE_DIAS_SEM.map(d => {
+    const vals = [];
+    for (let h = hMin; h < hMax; h++) { const v = libreGetDemanda(d, h); if (v !== null) vals.push(v); }
+    return vals.length ? Math.max(...vals) : '';
+  })];
+  rowsCob.push([], rowMin);
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(rowsCob), 'Cobertura_Hora');
 
   XLSX.writeFile(wb, `ModoLibre_${LIBRE_MESES[mes]}${anio}.xlsx`);
   showToast('Excel exportado', 'ok');
