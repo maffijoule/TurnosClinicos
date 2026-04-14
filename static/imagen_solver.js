@@ -15,7 +15,7 @@ const IMG_ED = {
 let IMG_SMIN = 14;
 let IMG_SMAX = 42;
 
-// Reusa SH, LW, EJ_COLORS, DIAS, DIAS_SHORT, slot2str, tieneColacion, horasTrabajadas de solver.js
+// Reusa SH, LW, EJ_COLORS, DIAS, DIAS_SHORT, slot2str, tieneColacion, horasTrabajadas, hasColacion de solver.js
 
 function imgGetTMs() {
   return (IMG_ED.solverData?.tecnologos_sel || []);
@@ -292,7 +292,7 @@ function imgDrawBlocks(sem) {
         <div class="img-tb-top" style="font-size:9px;font-weight:700;padding:2px 4px;
           background:rgba(255,255,255,.65);border-bottom:1px solid rgba(0,0,0,.06);
           white-space:nowrap">${slot2str(d.ent)}</div>
-        ${tieneColacion(d.dur) ? `<div class="img-tb-col" data-tm="${tm.nombre}" data-dia="${dia}"
+        ${hasColacion(d) ? `<div class="img-tb-col" data-tm="${tm.nombre}" data-dia="${dia}"
           style="position:absolute;top:${colPos * SH}px;
           left:0;right:0;height:${SH}px;cursor:ns-resize;z-index:6;
           background:repeating-linear-gradient(45deg,rgba(255,255,255,.45) 0px,rgba(255,255,255,.45) 3px,rgba(0,0,0,.08) 3px,rgba(0,0,0,.08) 6px);
@@ -344,7 +344,14 @@ function imgAttachBlockHandlers() {
           onmouseleave="this.style.background=''"
           onclick="IMG_ED.turnos[IMG_ED.semIdx]['${tm}']['${dia}'].activo=false;imgRefreshAll();document.getElementById('img-tb-ctx').style.display='none'">
           🗑 Eliminar turno
-        </div>`;
+        </div>
+        ${tieneColacion(IMG_ED.turnos[IMG_ED.semIdx]['${tm}']['${dia}'].dur) ? `<div style="padding:7px 12px;border-radius:5px;cursor:pointer;
+          font-weight:600;display:flex;align-items:center;gap:6px"
+          onmouseenter="this.style.background='#f0f0f0'"
+          onmouseleave="this.style.background=''"
+          onclick="const _d=IMG_ED.turnos[IMG_ED.semIdx]['${tm}']['${dia}'];_d.noCol=!_d.noCol;imgRefreshAll();document.getElementById('img-tb-ctx').style.display='none'">
+          🍽 ${IMG_ED.turnos[IMG_ED.semIdx]['${tm}']['${dia}'].noCol ? 'Restaurar colación' : 'Eliminar colación'}
+        </div>` : ''}`;
       ctx.style.display = 'block';
       ctx.style.left = `${e.clientX}px`;
       ctx.style.top  = `${e.clientY}px`;
@@ -421,7 +428,7 @@ function imgAttachBlockHandlers() {
       const mv = ev => {
         const delta = Math.round((ev.clientY - y0) / SH);
         d.dur = Math.max(2, Math.min(IMG_SMAX - d.ent, dur0 + delta));
-        if (tieneColacion(d.dur)) d.col = Math.max(1, Math.min(d.dur - 2, d.col ?? Math.floor(d.dur / 2)));
+        if (hasColacion(d)) d.col = Math.max(1, Math.min(d.dur - 2, d.col ?? Math.floor(d.dur / 2)));
         block.style.height = `${d.dur * SH}px`;
         block.querySelector('.img-tb-bot').textContent = slot2str(d.ent + d.dur);
         imgUpdateBgColors(dia);
@@ -485,7 +492,7 @@ function imgCalcCobSem(dia, slot, sem) {
     const d = sem[tm.nombre]?.[dia];
     if (!d || !d.activo) return false;
     if (slot < d.ent || slot >= d.ent + d.dur) return false;
-    if (tieneColacion(d.dur) && slot === d.ent + d.col) return false;
+    if (hasColacion(d) && slot === d.ent + d.col) return false;
     return true;
   }).length;
 }
@@ -513,7 +520,7 @@ function imgTotalHorasSem() {
   const sem = IMG_ED.turnos[IMG_ED.semIdx] || {};
   return imgGetTMs().reduce((s, tm) =>
     s + Object.values(sem[tm.nombre] || {}).filter(d => d.activo)
-      .reduce((t, d) => t + horasTrabajadas(d.dur), 0), 0);
+      .reduce((t, d) => t + horasTrabajadas(d.dur, d.noCol), 0), 0);
 }
 
 // ── PANEL HORAS ───────────────────────────────────────────────────────────────
@@ -525,7 +532,7 @@ function imgRenderHorasPanel() {
     text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px">Horas / sem</div>` +
     imgGetTMs().map(tm => {
       const h   = Object.values(sem[tm.nombre] || {}).filter(d => d.activo)
-                    .reduce((s, d) => s + horasTrabajadas(d.dur), 0);
+                    .reduce((s, d) => s + horasTrabajadas(d.dur, d.noCol), 0);
       const max = tm.horas_semana || 44;
       const pct = Math.min(h / max * 100, 100).toFixed(0);
       const c   = h > max ? '#c0392b' : h > max * .9 ? 'var(--warn)' : 'var(--success)';
@@ -548,7 +555,7 @@ function imgRefreshHorasPanel() {
     const el = document.getElementById(`img-hp_${tm.nombre.replace(/\W/g, '_')}`);
     if (!el) return;
     const h   = Object.values(sem[tm.nombre] || {}).filter(d => d.activo)
-                  .reduce((s, d) => s + horasTrabajadas(d.dur), 0);
+                  .reduce((s, d) => s + horasTrabajadas(d.dur, d.noCol), 0);
     const max = tm.horas_semana || 44;
     const pct = Math.min(h / max * 100, 100).toFixed(0);
     const c   = h > max ? '#c0392b' : h > max * .9 ? 'var(--warn)' : 'var(--success)';
@@ -604,7 +611,7 @@ function imgRenderResumen() {
     const semH = IMG_ED.semanas.map((_, i) => {
       const map = IMG_ED.turnos[i] || {};
       return Object.values(map[tm.nombre] || {}).filter(d => d.activo)
-        .reduce((s, d) => s + horasTrabajadas(d.dur), 0);
+        .reduce((s, d) => s + horasTrabajadas(d.dur, d.noCol), 0);
     });
     const tot  = semH.reduce((a, b) => a + b, 0);
     const max  = (tm.horas_semana || 44) * IMG_ED.semanas.length;
@@ -651,8 +658,8 @@ function imgBuildTurnosFromED() {
             libre: false,
             entrada:          slot2str(d.ent),
             salida:           slot2str(d.ent + d.dur),
-            duracion_h:       horasTrabajadas(d.dur),
-            colacion:         tieneColacion(d.dur),
+            duracion_h:       horasTrabajadas(d.dur, d.noCol),
+            colacion:         hasColacion(d),
             colacion_offset:  d.col ?? Math.floor(d.dur / 2),
           });
         }
@@ -765,8 +772,8 @@ function imgExportarExcelTurnos() {
           dia,
           slot2str(d.ent),
           slot2str(d.ent + d.dur),
-          horasTrabajadas(d.dur),
-          tieneColacion(d.dur) ? '30 min' : '—',
+          horasTrabajadas(d.dur, d.noCol),
+          hasColacion(d) ? '30 min' : '—',
         ]);
       });
     });
